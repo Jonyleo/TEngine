@@ -1,7 +1,9 @@
-#include <tengine/core/test.hpp>
+#include <tengine/test.hpp>
+
+#include <iostream>
 
 int main() {
-	tengine::core::Test testVar;
+	tengine::Test testVar;
 
 	testVar.print();
 
