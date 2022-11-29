@@ -1,4 +1,5 @@
 #include <iostream>
+#include <tengine/test.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtx/string_cast.hpp>
 
