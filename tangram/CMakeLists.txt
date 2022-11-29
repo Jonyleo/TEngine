@@ -7,6 +7,7 @@ include_directories("libs/glm/glm")
 
 target_link_libraries(${PROJECT_NAME}
     PUBLIC tengine-core
+    PUBLIC glm
 )
 
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 20)
