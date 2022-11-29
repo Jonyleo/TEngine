@@ -2,8 +2,6 @@
 **/cmake_install.cmake
 **/CMakeCache.txt
 **/Makefile
-<<<<<<< HEAD
 build
-=======
->>>>>>> f654d387073ed2c3c12c01364d25d189c6e767b6
 .vscode
+tangram/vc140.pdb
