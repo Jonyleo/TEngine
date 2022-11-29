@@ -3,11 +3,10 @@ project(tangram)
 
 add_executable(${PROJECT_NAME} tangram.cpp)
 
-find_package(glm REQUIRED)
+include_directories("libs/glm/glm")
 
 target_link_libraries(${PROJECT_NAME}
     PUBLIC tengine-core
-    PUBLIC glm::glm
 )
 
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 20)
