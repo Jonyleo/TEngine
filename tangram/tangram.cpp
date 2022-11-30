@@ -4,23 +4,20 @@
 #include <glm/glm.hpp>
 #include <glm/gtx/string_cast.hpp>
 #include <glm/ext/vector_relational.hpp>
+#include <glm/ext/matrix_relational.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-const float THRESHOLD = (float)1.0e-4;
+#define THRESHOLD (float)1.0e-4
+
 // random matrix values range: [0, 1.0]
-const int OFFSET = 0;
-const int RANGE = 10;
+#define MIN_RAND 10
+#define MAX_RAND 11
 
-struct coordinate_frame {
-	glm::vec3 v, w, u;
-};
-
-// test
 
 class MathChallenge {
 
 public:
-	static struct coordinate_frame calcCoordinateFrame(glm::vec3 view, glm::vec3 up) {
+	static glm::mat3 calcCoordinateFrame(glm::vec3 view, glm::vec3 up) {
 		glm::vec3 v = view / glm::length(view);
 		glm::vec3 upxv = glm::cross(up, v);
 		glm::vec3 w = upxv / glm::length(upxv);
@@ -28,7 +25,7 @@ public:
 
 		return {v, w, u};
 	}
-	// instead of matrix, you receive the axis of rotation
+	
 	static glm::mat3 rodriguesRotation(glm::vec3 axis, float angle) {
 		glm::mat3 dual_matrix (
 			0       , -axis[2], -axis[1],
@@ -49,23 +46,37 @@ public:
 		for(int i = 0; i < 3; ++i)
 				std::cout << glm::to_string(transposed[i]) << std::endl;
 	}
+
+	static float randNumber(int min, int max) {
+		return (rand() % min) + (max - min - 1); 
+	}
+
+	static glm::vec3 randVector(int min, int max) {
+		return glm::vec3(randNumber(min,max),
+						 randNumber(min,max),
+						 randNumber(min,max));
+	}
+
+	static glm::mat3 randMatrix(int min, int max) {
+		return glm::mat3(randVector(min,max),
+						 randVector(min,max),
+						 randVector(min,max));
+	}
 	
 
-	static void challenge1(glm::vec3 view, glm::vec3 up, struct coordinate_frame expected) {
-		struct coordinate_frame frame = calcCoordinateFrame(view, up);
+	static void challenge1(glm::vec3 view, glm::vec3 up, glm::mat3 expected) {
+		glm::mat3 frame = calcCoordinateFrame(view, up);
 
 		std::cout << "view= " << glm::to_string(view) << std::endl;
 		std::cout << "up= " << glm::to_string(up) << std::endl;
 
 		std::cout << std::endl;
 
-		std::cout << "v= " << glm::to_string(frame.v) << std::endl;
-		std::cout << "w= " << glm::to_string(frame.w) << std::endl;
-		std::cout << "u= " << glm::to_string(frame.u) << std::endl;
+		std::cout << "v= " << glm::to_string(frame[0]) << std::endl;
+		std::cout << "w= " << glm::to_string(frame[1]) << std::endl;
+		std::cout << "u= " << glm::to_string(frame[2]) << std::endl;
 
-		if(glm::all(glm::equal(frame.v, expected.v, THRESHOLD)) &
-		   glm::all(glm::equal(frame.w, expected.w, THRESHOLD)) &
-		   glm::all(glm::equal(frame.u, expected.u, THRESHOLD))) {
+		if(glm::all(glm::equal(frame, expected, THRESHOLD))) {
 
 			std::cout << "Correct" << std::endl;
 		} else {
@@ -96,47 +107,43 @@ public:
 	}
 
 	static void challenge3(){
-		
 		// random matrices creation: A
-		float v[9];
+		
 
-		for (int i = 0; i < 9; ++i)
-				v[i] = 0.1f * OFFSET + 0.1f * (rand() % RANGE);
-
-		glm::mat3 A = glm::make_mat3(v);
-		std::cout << "\nA:\n";
+		glm::mat3 A = randMatrix(10, 11);
+		std::cout << std::endl << "A:" << std::endl;
 		printMatrix(A);
 		float detA = glm::determinant(A);
-		std::cout << "\ndetA: " << detA << std::endl;
+		std::cout << std::endl << "detA: " << detA << std::endl;
 
 		if(detA == 0)
 			return;
 
-		// random matrices creation: B
-		for (int i = 0; i < 9; ++i)
-				v[i] = 0.1f * OFFSET + 0.1f * (rand() % RANGE);
+		glm::mat3 B = randMatrix(10, 11);
 
-		glm::mat3 B = glm::make_mat3(v);
-
-		std::cout << "\nB:\n";
+		std::cout << std::endl << "B:" << std::endl;
 		printMatrix(B);
 		float detB = glm::determinant(B);
-		std::cout << "\ndetB: " << detB << std::endl;
+		std::cout << std::endl << "detB: " << detB << std::endl;
 		if (detB == 0)
 			return;
 
 		// (AB)^-1 = (B^-1) (A^-1)
 		glm::mat3 firstMember = glm::inverse(A * B);
-		std::cout << "\n(AB)^-1:\n";
+		std::cout << "\n(AB)^-1:" << std::endl;
 		printMatrix(firstMember);
 
 		glm::mat3 secondMember = glm::inverse(B) * glm::inverse(A);
-		std::cout << "\n(B^-1) (A^-1):\n";
+		std::cout << "\n(B^-1) (A^-1):" << std::endl;
 		printMatrix(secondMember);
 		
-		// transpose operation not required here
-		for (int i = 0; i < 3; ++i)
-			assert(glm::all(glm::equal(firstMember[i], secondMember[i], THRESHOLD)));
+		if(glm::all(glm::equal(firstMember, secondMember, THRESHOLD))) {
+			std::cout << "Correct" << std::endl;
+		} else {
+			std::cout << "Wrong" << std::endl;
+		}
+		
+		std::cout << "----------------" << std::endl;
 	}
 };
 
@@ -277,11 +284,14 @@ int main() {
 							  180.0f,
 							  glm::vec3(3.14f, -1.0f, 8.0f));
 
+
+    std::cout << std::endl << "Inversion Challenge" << std::endl;
+	std::cout << "----------------" << std::endl;		
+
 	// Providing a seed value
-	
 	srand((unsigned)time(NULL));
 
-	for (int i = 0; i < 100; i++)
+	for (int i = 0; i < 10; i++)
 		MathChallenge::challenge3();
 
 	return 0;
