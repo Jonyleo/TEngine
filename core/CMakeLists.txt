@@ -1,6 +1,21 @@
 cmake_minimum_required(VERSION 3.0.0)
 project(TEngine)
 
+if(MSVC)
+	find_library(glfw3 REQUIRED
+				NAMES glfw3
+				HINTS "${CMAKE_SOURCE_DIR}/dependencies/lib"
+	)
+	find_library(GLEW REQUIRED
+				NAMES glew32
+				HINTS "${CMAKE_SOURCE_DIR}/dependencies/lib"
+	)
+
+elseif(UNIX AND NOT APPLE) 
+	find_package(glfw3 REQUIRED)
+	find_package(GLEW REQUIRED)
+endif()
+
 set(TEngine_CORE_SOURCE
 
 	"include/tengine/mgl.hpp"
@@ -19,19 +34,19 @@ set(TEngine_CORE_INCLUDE
 	"src/tengine/mglShader.cpp"
 )
 
-
-include_directories("libs/glm")
-find_package(glfw3 REQUIRED)
-find_package(GLEW REQUIRED)
-
 add_library(tengine-core ${TEngine_CORE_SOURCE} ${TEngine_CORE_INCLUDE})
-target_include_directories(tengine-core PUBLIC "include" PRIVATE "src")
+target_include_directories(tengine-core 
+	PUBLIC "include" 
+	PRIVATE "src"
+
+	PUBLIC "${CMAKE_SOURCE_DIR}/dependencies/include"
+)
+
+target_link_libraries(tengine-core 
+    PUBLIC ${glfw3}
+	PUBLIC ${GLEW}
+	PUBLIC opengl32
+)
+
 set_property(TARGET tengine-core PROPERTY CXX_STANDARD 20)
 target_compile_features(tengine-core PUBLIC cxx_std_20)
-target_link_libraries(tengine-core 
-	PUBLIC glm
-	PUBLIC glm
-    PUBLIC GLEW
-	PUBLIC glfw
-	PUBLIC GL
-)

@@ -5,3 +5,6 @@
 build
 .vscode
 tangram/vc140.pdb
+out
+.vs
+CMakeSettings.json
