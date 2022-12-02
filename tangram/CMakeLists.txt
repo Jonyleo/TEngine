@@ -17,16 +17,27 @@ elseif(UNIX AND NOT APPLE)
 endif()
 
 add_executable(${PROJECT_NAME} "tangram.cpp")
-target_include_directories(${PROJECT_NAME} 
-	PUBLIC "${CMAKE_SOURCE_DIR}/dependencies/include"
-)
+if(MSVC)
+	target_include_directories(${PROJECT_NAME} 
+		PUBLIC "${CMAKE_SOURCE_DIR}/dependencies/include"
+	)
+endif()
 
 target_link_libraries(${PROJECT_NAME}
     PUBLIC tengine-core
     PUBLIC ${glfw3}
 	PUBLIC ${GLEW}
+)
+
+if(MSVC) 
+target_link_libraries(${PROJECT_NAME}
 	PUBLIC opengl32
 )
+elseif(UNIX AND NOT APPLE) 
+target_link_libraries(${PROJECT_NAME}
+	PUBLIC GL
+)
+endif()
 
 file(COPY        ${CMAKE_CURRENT_SOURCE_DIR}/assets 
      DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
