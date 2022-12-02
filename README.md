@@ -26,6 +26,7 @@ The dependencies' folder structure should be the following
 ### Building
 
 Navigate to tangram/tangram.cpp and open the file
+Select Startup Item (tangram.exe)
 Run
 
 The executable will be accessible in TEngine\out\build\x64-Debug\tangram but it must be in the
