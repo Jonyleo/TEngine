@@ -19,11 +19,14 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
+#include <glm/gtx/string_cast.hpp>
 
-#include "tengine/mgl.hpp"
-#include <tengine/Shape.hpp>
+#include <tengine/mgl.hpp>
 #include <tengine/Color.hpp>
 #include <tengine/Point.hpp>
+#include <tengine/Mesh.hpp>
+#include <tengine/Transform.hpp>
+#include <tengine/Entity.hpp>
 
 ////////////////////////////////////////////////////////////////////////// MYAPP
 
@@ -42,7 +45,6 @@ private:
   GLint MatrixId;
   GLint ColorId;
 
-  std::vector<Shape> shapes; 
 
   void createShaderProgram();
   void createBufferObjects();
@@ -73,80 +75,78 @@ void MyApp::createShaderProgram() {
 
 
 const tengine::Point Vertices[] = {
-    {0.25f, 0.25f, 0.0f, 1.0f},
-    {0.75f, 0.25f, 0.0f, 1.0f},
-    {0.25f, 0.75f, 0.0f, 1.0f},
-    {0.75f, 0.75f, 0.0f, 1.0f}};
+    {-0.25f, -0.25f, 0.0f, 1.0f},
+    {0.25f, -0.25f, 0.0f, 1.0f},
+    {-0.25f, 0.25f, 0.0f, 1.0f},
+    {0.25f, 0.25f, 0.0f, 1.0f}};
 
+const GLubyte Indexes[] = {0, 1, 2, 1, 3, 2};
 
-const GLubyte Indices[] = {0, 1, 2, 1, 3, 2};
+tengine::Mesh *triangleMesh = nullptr;
+tengine::Transform transform;
+
+tengine::Entity *redTriangle = nullptr;
+tengine::Entity *blueTriangle = nullptr;
+tengine::Entity *greenTriangle = nullptr;
+tengine::Entity *blackTriangle = nullptr;
 
 void MyApp::createBufferObjects() {
-  glGenVertexArrays(1, &VaoId);
-  glBindVertexArray(VaoId);
-  {
-    glGenBuffers(2, VboId);
+    triangleMesh = new tengine::Mesh(3);
+    triangleMesh->createVertexBuffer(Vertices, sizeof(Vertices));
+    triangleMesh->createIndexBuffer(Indexes, sizeof(Indexes));
+    triangleMesh->createArrayBuffer(POSITION, 4, sizeof(tengine::Point));
 
-    glBindBuffer(GL_ARRAY_BUFFER, VboId[0]);
-    {
-        glBufferData(GL_ARRAY_BUFFER, sizeof(Vertices), Vertices, GL_STATIC_DRAW);
-        glEnableVertexAttribArray(POSITION);
-        glVertexAttribPointer(POSITION, 4, GL_FLOAT, GL_FALSE, sizeof(tengine::Point), 0);
-    }
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, VboId[1]);
-    {
-      glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Indices), Indices,
-                   GL_STATIC_DRAW);
-    }
-  }
-  glBindVertexArray(0);
-  glBindBuffer(GL_ARRAY_BUFFER, 0);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-  glDeleteBuffers(2, VboId);
+    redTriangle = new tengine::Entity(tengine::RED, transform, *triangleMesh, Shaders);
+    blueTriangle = new tengine::Entity(tengine::BLUE, transform, *triangleMesh, Shaders);
+    greenTriangle = new tengine::Entity(tengine::GREEN, transform, *triangleMesh, Shaders);
+    blackTriangle = new tengine::Entity(tengine::BLACK, transform, *triangleMesh, Shaders);
+    
+    redTriangle->transform.moveTo(glm::vec2(-0.5f, -0.5f));
+    
+    blueTriangle->transform.moveTo(glm::vec2(0.5f, -0.5f));
+    blueTriangle->transform.rotateBy(glm::radians(90.0f));
+
+    greenTriangle->transform.moveTo(glm::vec2(-0.5f, 0.5f));
+    greenTriangle->transform.scaleBy(2);
+
+    blackTriangle->transform.moveTo(glm::vec2(0.5f, 0.5f));
+    blackTriangle->transform.scaleBy(0.5);
+    blackTriangle->transform.rotateBy(glm::radians(-45.0f));
+
 }
 
 void MyApp::destroyBufferObjects() {
-  glBindVertexArray(VaoId);
-  glDisableVertexAttribArray(POSITION);
-  glDisableVertexAttribArray(COLOR);
-  glDeleteVertexArrays(1, &VaoId);
-  glBindVertexArray(0);
+  delete triangleMesh;
+  delete redTriangle;
+  delete blueTriangle;
+  delete greenTriangle;
+  delete blackTriangle;
 }
 
 ////////////////////////////////////////////////////////////////////////// SCENE
 
-const glm::mat4 I(1.0f);
-const glm::mat4 M = glm::translate(glm::vec3(-1.0f, -1.0f, 0.0f));
-const glm::mat4 M1 = glm::translate(glm::vec3(-1.0f, 0.0f, 0.0f));
-
 void MyApp::drawScene() {
-  // Drawing directly in clip space
+    // Drawing directly in clip space
+    if(redTriangle != nullptr)
+        redTriangle->draw();
 
-  glBindVertexArray(VaoId);
-  Shaders->bind();
+    if(blueTriangle != nullptr)
+        blueTriangle->draw();
 
-  glUniformMatrix4fv(MatrixId, 1, GL_FALSE, glm::value_ptr(I));
-  glUniform4f(ColorId, 1.0f, 0.0f, 0.0f, 0.0f);
-  glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, (GLvoid *)0);
+    if(greenTriangle != nullptr)
+        greenTriangle->draw();
 
-  glUniformMatrix4fv(MatrixId, 1, GL_FALSE, glm::value_ptr(M));
-  glUniform4f(ColorId, 0.0f, 1.0f, 0.0f, 0.0f);
-  glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, (GLvoid *)0);
+    if(blackTriangle != nullptr)
+        blackTriangle->draw();
 
-  glUniformMatrix4fv(MatrixId, 1, GL_FALSE, glm::value_ptr(M1));
-  glUniform4f(ColorId, 0.0f, 0.0f, 1.0f, 0.0f);
-  glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, (GLvoid *)0);
-
-
-  Shaders->unbind();
-  glBindVertexArray(0);
+    
 }
 
 ////////////////////////////////////////////////////////////////////// CALLBACKS
 
 void MyApp::initCallback(GLFWwindow *win) {
-  createBufferObjects();
   createShaderProgram();
+  createBufferObjects();
 }
 
 void MyApp::windowCloseCallback(GLFWwindow *win) { destroyBufferObjects(); }

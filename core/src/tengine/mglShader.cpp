@@ -55,7 +55,6 @@ void ShaderProgram::addShader(const GLenum shader_type,
                               const std::string &filename) {
   const GLuint shader_id = glCreateShader(shader_type);
   const std::string scode = read("assets/shaders/" + filename);
-  std::cout << scode << std::endl; 
   const GLchar *code = scode.c_str();
   glShaderSource(shader_id, 1, &code, 0);
   glCompileShader(shader_id);

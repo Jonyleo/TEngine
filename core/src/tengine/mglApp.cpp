@@ -116,7 +116,17 @@ void Engine::setupGLFW() {
   setupWindow();
   setupCallbacks();
 }
+void GLAPIENTRY glErrorCallback(GLenum source,
+                                            GLenum type,
+                                            GLuint id,
+                                            GLenum severity, 
+                                            GLsizei length,
+                                            const GLchar * message,
+                                            const void * param) {
 
+    // TODO switch megacity
+    std::cerr << "[" << severity << "]" << message << std::endl;
+}
 void Engine::setupGLEW() {
   glewExperimental = GL_TRUE;
   // Allow extension entry points to be loaded even if the extension isn't
@@ -126,6 +136,9 @@ void Engine::setupGLEW() {
     std::cerr << "ERROR glewInit: " << glewGetString(result) << std::endl;
     exit(EXIT_FAILURE);
   }
+  glEnable(GL_DEBUG_OUTPUT);
+  glDebugMessageCallback(glErrorCallback, nullptr);
+  glGenBuffers(-1, nullptr);
   glGetError();
   // GLenum err_code = glGetError(); // Full syntax to check
   // You might get GL_INVALID_ENUM when loading GLEW.

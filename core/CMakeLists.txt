@@ -16,7 +16,7 @@ elseif(UNIX AND NOT APPLE)
 	find_package(GLEW REQUIRED)
 endif()
 
-set(TEngine_CORE_SOURCE
+set(TEngine_CORE_INCLUDE
 
 	"include/tengine/mgl.hpp"
 	"include/tengine/mglApp.hpp"
@@ -27,17 +27,19 @@ set(TEngine_CORE_SOURCE
 
 	"include/tengine/Color.hpp"
 	"include/tengine/Point.hpp"
-	"include/tengine/Shape.hpp"
+	"include/tengine/Entity.hpp"
+	"include/tengine/Mesh.hpp"
+	"include/tengine/Transform.hpp"
 )
 
-set(TEngine_CORE_INCLUDE
+set(TEngine_CORE_SOURCE
 
 	"src/tengine/mglApp.cpp"
 	"src/tengine/mglCamera.cpp"
 	"src/tengine/mglError.cpp"
 	"src/tengine/mglShader.cpp"
 
-	"src/tengine/Shape.cpp"
+	"src/tengine/Mesh.cpp"
 )
 
 add_library(tengine-core ${TEngine_CORE_SOURCE} ${TEngine_CORE_INCLUDE})
