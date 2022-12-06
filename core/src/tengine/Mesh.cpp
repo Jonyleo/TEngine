@@ -59,8 +59,7 @@ void tengine::Mesh::draw() {
 
     ((tengine::Entity *) entity)->setUniforms();
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboId[1]);
-    glDrawArrays(GL_TRIANGLES, 0, 3);
-    //glDrawElements(GL_TRIANGLES, elements, GL_UNSIGNED_BYTE, (GLvoid *)0);
+    glDrawElements(GL_TRIANGLES, elements, GL_UNSIGNED_BYTE, (GLvoid *)0);
 
     unbind();
 }
