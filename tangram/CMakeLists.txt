@@ -11,7 +11,7 @@ if(MSVC)
 				HINTS "${CMAKE_SOURCE_DIR}/dependencies/lib"
 	)
 
-elseif(UNIX AND NOT APPLE) 
+elseif(UNIX AND NOT APPLE)
 	find_package(glfw3 REQUIRED)
 	find_package(GLEW REQUIRED)
 endif()
@@ -25,25 +25,29 @@ endif()
 
 target_link_libraries(${PROJECT_NAME}
     PUBLIC tengine-core
-    PUBLIC ${glfw3}
-	PUBLIC ${GLEW}
 )
 
 if(MSVC) 
-target_link_libraries(${PROJECT_NAME}
-	PUBLIC opengl32
-)
+	target_link_libraries(${PROJECT_NAME}
+		PUBLIC ${glfw3}
+		PUBLIC ${GLEW}
+		PUBLIC opengl32
+	)
 elseif(UNIX AND NOT APPLE) 
-target_link_libraries(${PROJECT_NAME}
-	PUBLIC GL
-)
+	target_link_libraries(${PROJECT_NAME}
+		PUBLIC glfw
+		PUBLIC GLEW
+		PUBLIC GL
+	)
 endif()
 
 file(COPY        ${CMAKE_CURRENT_SOURCE_DIR}/assets 
      DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
-file(COPY ${CMAKE_SOURCE_DIR}/dependencies/lib/glew32.dll
-     DESTINATION  ${CMAKE_CURRENT_BINARY_DIR})
+if(MSVC) 
+	file(COPY ${CMAKE_SOURCE_DIR}/dependencies/lib/glew32.dll
+		DESTINATION  ${CMAKE_CURRENT_BINARY_DIR})
+endif()
 
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 20)
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_20)

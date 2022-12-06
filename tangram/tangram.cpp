@@ -11,6 +11,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include <iostream>
+#include <vector>
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -20,6 +21,9 @@
 #include <glm/gtx/transform.hpp>
 
 #include "tengine/mgl.hpp"
+#include <tengine/Shape.hpp>
+#include <tengine/Color.hpp>
+#include <tengine/Point.hpp>
 
 ////////////////////////////////////////////////////////////////////////// MYAPP
 
@@ -33,9 +37,12 @@ public:
 
 private:
   const GLuint POSITION = 0, COLOR = 1;
-  GLuint VaoId, VboId[2];
+  GLuint VaoId, VboId[3];
   mgl::ShaderProgram *Shaders;
   GLint MatrixId;
+  GLint ColorId;
+
+  std::vector<Shape> shapes; 
 
   void createShaderProgram();
   void createBufferObjects();
@@ -53,27 +60,26 @@ void MyApp::createShaderProgram() {
   Shaders->addShader(GL_FRAGMENT_SHADER, "clip-fs.glsl");
 
   Shaders->addAttribute(mgl::POSITION_ATTRIBUTE, POSITION);
-  Shaders->addAttribute(mgl::COLOR_ATTRIBUTE, COLOR);
   Shaders->addUniform("Matrix");
+  Shaders->addUniform("inColor");
 
   Shaders->create();
 
   MatrixId = Shaders->Uniforms["Matrix"].index;
+  ColorId = Shaders->Uniforms["inColor"].index;
 }
 
 //////////////////////////////////////////////////////////////////// VAOs & VBOs
 
-typedef struct {
-  GLfloat XYZW[4];
-  GLfloat RGBA[4];
-} Vertex;
 
-const Vertex Vertices[] = {
-    {{0.25f, 0.25f, 0.0f, 1.0f}, {1.0f, 0.0f, 0.0f, 1.0f}},
-    {{0.75f, 0.25f, 0.0f, 1.0f}, {0.0f, 1.0f, 0.0f, 1.0f}},
-    {{0.50f, 0.75f, 0.0f, 1.0f}, {0.0f, 0.0f, 1.0f, 1.0f}}};
+const tengine::Point Vertices[] = {
+    {0.25f, 0.25f, 0.0f, 1.0f},
+    {0.75f, 0.25f, 0.0f, 1.0f},
+    {0.25f, 0.75f, 0.0f, 1.0f},
+    {0.75f, 0.75f, 0.0f, 1.0f}};
 
-const GLubyte Indices[] = {0, 1, 2};
+
+const GLubyte Indices[] = {0, 1, 2, 1, 3, 2};
 
 void MyApp::createBufferObjects() {
   glGenVertexArrays(1, &VaoId);
@@ -83,12 +89,9 @@ void MyApp::createBufferObjects() {
 
     glBindBuffer(GL_ARRAY_BUFFER, VboId[0]);
     {
-      glBufferData(GL_ARRAY_BUFFER, sizeof(Vertices), Vertices, GL_STATIC_DRAW);
-      glEnableVertexAttribArray(POSITION);
-      glVertexAttribPointer(POSITION, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
-      glEnableVertexAttribArray(COLOR);
-      glVertexAttribPointer(COLOR, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex),
-                            (GLvoid *)sizeof(Vertices[0].XYZW));
+        glBufferData(GL_ARRAY_BUFFER, sizeof(Vertices), Vertices, GL_STATIC_DRAW);
+        glEnableVertexAttribArray(POSITION);
+        glVertexAttribPointer(POSITION, 4, GL_FLOAT, GL_FALSE, sizeof(tengine::Point), 0);
     }
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, VboId[1]);
     {
@@ -114,6 +117,7 @@ void MyApp::destroyBufferObjects() {
 
 const glm::mat4 I(1.0f);
 const glm::mat4 M = glm::translate(glm::vec3(-1.0f, -1.0f, 0.0f));
+const glm::mat4 M1 = glm::translate(glm::vec3(-1.0f, 0.0f, 0.0f));
 
 void MyApp::drawScene() {
   // Drawing directly in clip space
@@ -122,10 +126,17 @@ void MyApp::drawScene() {
   Shaders->bind();
 
   glUniformMatrix4fv(MatrixId, 1, GL_FALSE, glm::value_ptr(I));
-  glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_BYTE, (GLvoid *)0);
+  glUniform4f(ColorId, 1.0f, 0.0f, 0.0f, 0.0f);
+  glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, (GLvoid *)0);
 
   glUniformMatrix4fv(MatrixId, 1, GL_FALSE, glm::value_ptr(M));
-  glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_BYTE, (GLvoid *)0);
+  glUniform4f(ColorId, 0.0f, 1.0f, 0.0f, 0.0f);
+  glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, (GLvoid *)0);
+
+  glUniformMatrix4fv(MatrixId, 1, GL_FALSE, glm::value_ptr(M1));
+  glUniform4f(ColorId, 0.0f, 0.0f, 1.0f, 0.0f);
+  glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, (GLvoid *)0);
+
 
   Shaders->unbind();
   glBindVertexArray(0);

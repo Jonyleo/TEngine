@@ -24,6 +24,10 @@ set(TEngine_CORE_SOURCE
 	"include/tengine/mglConventions.hpp"
 	"include/tengine/mglError.hpp"
 	"include/tengine/mglShader.hpp"
+
+	"include/tengine/Color.hpp"
+	"include/tengine/Point.hpp"
+	"include/tengine/Shape.hpp"
 )
 
 set(TEngine_CORE_INCLUDE
@@ -32,6 +36,8 @@ set(TEngine_CORE_INCLUDE
 	"src/tengine/mglCamera.cpp"
 	"src/tengine/mglError.cpp"
 	"src/tengine/mglShader.cpp"
+
+	"src/tengine/Shape.cpp"
 )
 
 add_library(tengine-core ${TEngine_CORE_SOURCE} ${TEngine_CORE_INCLUDE})
@@ -46,17 +52,16 @@ if(MSVC)
 	)
 endif()
 
-target_link_libraries(tengine-core 
-    PUBLIC ${glfw3}
-	PUBLIC ${GLEW}
-)
-
 if(MSVC) 
 	target_link_libraries(tengine-core
+		PUBLIC ${glfw3}
+		PUBLIC ${GLEW}
 		PUBLIC opengl32
 	)
 elseif(UNIX AND NOT APPLE) 
 	target_link_libraries(tengine-core
+		PUBLIC glfw
+		PUBLIC GLEW
 		PUBLIC GL
 	)
 endif()
