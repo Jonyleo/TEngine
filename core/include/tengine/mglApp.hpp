@@ -13,69 +13,74 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 
-namespace mgl {
+namespace mgl
+{
 
-class App;
-class Engine;
+    class App;
+    class Engine;
 
-//////////////////////////////////////////////////////////////////////////// App
+    //////////////////////////////////////////////////////////////////////////// App
 
-class App {
-public:
-  virtual void initCallback(GLFWwindow *window) {}
-  virtual void displayCallback(GLFWwindow *window, double elapsed) {}
-  virtual void windowCloseCallback(GLFWwindow *window) {}
-  virtual void windowSizeCallback(GLFWwindow *window, int width, int height) {}
-  virtual void cursorCallback(GLFWwindow *window, double xpos, double ypos) {}
-  virtual void keyCallback(GLFWwindow *window, int key, int scancode,
-                           int action, int mods) {}
-  virtual void mouseButtonCallback(GLFWwindow *window, int button, int action,
-                                   int mods) {}
-  virtual void scrollCallback(GLFWwindow *window, double xoffset,
-                              double yoffset) {}
-  virtual void joystickCallback(int jid, int event) {}
-};
+    class App
+    {
+    public:
+        virtual void initCallback(GLFWwindow *window) {}
+        virtual void displayCallback(GLFWwindow *window, double elapsed) {}
+        virtual void windowCloseCallback(GLFWwindow *window) {}
+        virtual void windowSizeCallback(GLFWwindow *window, int width, int height) {}
+        virtual void cursorCallback(GLFWwindow *window, double xpos, double ypos) {}
+        virtual void keyCallback(GLFWwindow *window, int key, int scancode,
+                                 int action, int mods) {}
+        virtual void mouseButtonCallback(GLFWwindow *window, int button, int action,
+                                         int mods) {}
+        virtual void scrollCallback(GLFWwindow *window, double xoffset,
+                                    double yoffset) {}
+        virtual void joystickCallback(int jid, int event) {}
+    };
 
-///////////////////////////////////////////////////////////////////////// Engine
+    ///////////////////////////////////////////////////////////////////////// Engine
 
-class Engine {
-public:
-  unsigned short WindowWidth, WindowHeight;
+    class Engine
+    {
+    public:
+        unsigned short WindowWidth, WindowHeight;
+         
+        static Engine &getInstance();
 
-  static Engine &getInstance();
+        void setApp(App *app);
+        App *getApp();
+        void setOpenGL(int major, int minor);
+        void setWindow(int width, int height, const char *title, int fullscreen,
+                       int vsync);
+        void init();
+        void run();
+        
+    protected:
+        virtual ~Engine();
 
-  void setApp(App *app);
-  App *getApp();
-  void setOpenGL(int major, int minor);
-  void setWindow(int width, int height, const char *title, int fullscreen,
-                 int vsync);
-  void init();
-  void run();
+    private:
+        Engine();
+        App *GlApp;
+        int GlMajor, GlMinor;
+        bool windowSizeChanged;
+        GLFWwindow *Window;
+        const char *WindowTitle;
+        int Fullscreen;
+        int Vsync;
 
-protected:
-  virtual ~Engine();
+        void setupWindow();
+        void setupGLFW();
+        void setupGLEW();
+        void setupOpenGL();
+        void setupCallbacks();
+        
 
-private:
-  Engine();
-  App *GlApp;
-  int GlMajor, GlMinor;
-  GLFWwindow *Window;
-  const char *WindowTitle;
-  int Fullscreen;
-  int Vsync;
+    public:
+        Engine(Engine const &) = delete;
+        void operator=(Engine const &) = delete;
+    };
 
-  void setupWindow();
-  void setupGLFW();
-  void setupGLEW();
-  void setupOpenGL();
-  void setupCallbacks();
-
-public:
-  Engine(Engine const &) = delete;
-  void operator=(Engine const &) = delete;
-};
-
-////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////
 } // namespace mgl
 
 #endif /* MGL_APP_HPP */

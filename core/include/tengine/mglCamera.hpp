@@ -12,28 +12,30 @@
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 
-namespace mgl {
+namespace mgl
+{
 
-class Camera;
+    class Camera;
 
-///////////////////////////////////////////////////////////////////////// Camera
+    ///////////////////////////////////////////////////////////////////////// Camera
 
-class Camera {
-private:
-  GLuint UboId;
-  glm::mat4 ViewMatrix;
-  glm::mat4 ProjectionMatrix;
+    class Camera
+    {
+    private:
+        GLuint UboId;
+        glm::mat4 ViewMatrix;
+        glm::mat4 ProjectionMatrix;
 
-public:
-  explicit Camera(GLuint bindingpoint);
-  ~Camera();
-  glm::mat4 getViewMatrix();
-  void setViewMatrix(const glm::mat4 &viewmatrix);
-  glm::mat4 getProjectionMatrix();
-  void setProjectionMatrix(const glm::mat4 &projectionmatrix);
-};
+    public:
+        explicit Camera(GLuint bindingpoint);
+        ~Camera();
+        glm::mat4 getViewMatrix();
+        void setViewMatrix(const glm::mat4 &viewmatrix);
+        glm::mat4 getProjectionMatrix();
+        void setProjectionMatrix(const glm::mat4 &projectionmatrix);
+    };
 
-////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////
 } // namespace mgl
 
 #endif /* MGL_CAMERA_HPP */

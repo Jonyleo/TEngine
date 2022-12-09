@@ -41,13 +41,22 @@ elseif(UNIX AND NOT APPLE)
 	)
 endif()
 
-file(COPY        ${CMAKE_CURRENT_SOURCE_DIR}/assets 
-     DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-
 if(MSVC) 
 	file(COPY ${CMAKE_SOURCE_DIR}/dependencies/lib/glew32.dll
 		DESTINATION  ${CMAKE_CURRENT_BINARY_DIR})
 endif()
 
+set(TANGRAM_RESOURCES
+	${CMAKE_CURRENT_SOURCE_DIR}/assets
+)
+
+add_custom_target(copy_files ALL)
+
+add_custom_command(TARGET copy_files
+	POST_BUILD
+	COMMAND ${CMAKE_COMMAND} -E copy_directory
+	${TANGRAM_RESOURCES}
+	${CMAKE_CURRENT_BINARY_DIR}/assets
+)
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 20)
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_20)
