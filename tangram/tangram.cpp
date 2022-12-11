@@ -71,8 +71,8 @@ void MyApp::createShaderProgram()
 std::map<std::string, std::shared_ptr<tengine::Mesh>> meshes;
 std::map<std::string, std::shared_ptr<tengine::Entity>> entities;
 
-void MyApp::createEntities()
-{
+void MyApp::createEntities(){
+
 	tengine::VertexAttrInfo positionAttr = {POSITION, 4, GL_FLOAT, GL_FALSE, sizeof(tengine::Point), 0};
 
 	std::ifstream meshFile("assets/objects/meshes.json");
@@ -106,7 +106,7 @@ void MyApp::createEntities()
 		meshes[id]->createVertexBuffer(vertexes.data(), vertexes.size() * sizeof(tengine::Point));
 		meshes[id]->createIndexBuffer(indexes.data(), indexes.size() * sizeof(GLubyte));
 		meshes[id]->createArrayBuffer(&positionAttr, 1);
-	}
+		}
 
 	std::ifstream entityFile("assets/objects/entities.json");
 	json entityData = json::parse(entityFile);
@@ -184,7 +184,7 @@ int main(int argc, char *argv[])
 	mgl::Engine &engine = mgl::Engine::getInstance();
 	engine.setApp(new MyApp());
 	engine.setOpenGL(4, 6);
-	engine.setWindow(1200, 600, "Hello Modern 2D World", 0, 1);
+	engine.setWindow(1200, 600, "Tangram || Group 1 [ASS 2]", 0, 1);
 	engine.init();
 	engine.run();
 	exit(EXIT_SUCCESS);

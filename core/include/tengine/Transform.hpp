@@ -24,8 +24,8 @@ namespace tengine
 
     public:
         Transform() : Transform({0, 0}, 0, 1) {}
-        Transform(glm::vec2 position, float rotation, float scale)
-            : position(position), rotation(rotation), scale(scale) {}
+        Transform(glm::vec2 position, float rotation, float scale) :
+            position(position), rotation(rotation), scale(scale) {}
 
         void rotateTo(float angle);
         void rotateBy(float angle);
