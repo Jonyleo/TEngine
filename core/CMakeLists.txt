@@ -26,9 +26,13 @@ set(TEngine_CORE_INCLUDE
 	"include/tengine/mglShader.hpp"
 
 	"include/tengine/DataStructs.hpp"
-	"include/tengine/Entity.hpp"
+	"include/tengine/Component.hpp"
+
 	"include/tengine/Mesh.hpp"
+	"include/tengine/Entity.hpp"
 	"include/tengine/Transform.hpp"
+	"include/tengine/MeshInstance.hpp"
+	"include/tengine/ShaderManager.hpp"
 
 	"include/tengine/json.hpp"
 )
@@ -43,6 +47,8 @@ set(TEngine_CORE_SOURCE
 	"src/tengine/Mesh.cpp"
 	"src/tengine/Entity.cpp"
 	"src/tengine/Transform.cpp"
+	"src/tengine/MeshInstance.cpp"
+	"src/tengine/ShaderManager.cpp"
 )
 
 add_library(tengine-core ${TEngine_CORE_SOURCE} ${TEngine_CORE_INCLUDE})

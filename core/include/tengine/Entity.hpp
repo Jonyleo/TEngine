@@ -1,31 +1,26 @@
 #ifndef __ENTITY_HPP__
 #define __ENTITY_HPP__
 
-#include <glm/glm.hpp>
-#include <glm/gtc/type_ptr.hpp>
+#include <memory>
+#include <vector>
 
-
-#include "mglShader.hpp"
-
-#include "DataStructs.hpp"
-#include "Transform.hpp"
-#include "Mesh.hpp"
+#include "tengine.hpp"
 
 namespace tengine
 {
+    using pComponent = std::shared_ptr<tengine::Component>;
+
     class Entity
     {
     private:
-        tengine::Color color;
-        tengine::Transform transform;
-        tengine::Mesh mesh;
-        mgl::ShaderProgram *shaderProgram;
+        std::vector<pComponent> components;
 
     public:
-        Entity(tengine::Color color, tengine::Transform transform, tengine::Mesh &mesh,
-               mgl::ShaderProgram *shaderProgram);
+        Entity(std::vector<pComponent> components)
+            : components(components) {}
+        Entity() {}
 
-        void setUniformsCallback();
+        void attachComponent(pComponent component);
 
         void draw();
     };

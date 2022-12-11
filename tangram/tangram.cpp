@@ -41,7 +41,7 @@ public:
 
 private:
 	const GLuint POSITION = 0;
-	mgl::ShaderProgram *Shaders;
+	std::shared_ptr<mgl::ShaderProgram> Shaders;
 
 	void createShaderProgram();
 	void createEntities();
@@ -54,14 +54,14 @@ private:
 void MyApp::createShaderProgram()
 {
 
-	Shaders = new mgl::ShaderProgram();
+	Shaders = std::make_shared<mgl::ShaderProgram>();
 
 	Shaders->addShader(GL_VERTEX_SHADER, "clip-vs.glsl");
 	Shaders->addShader(GL_FRAGMENT_SHADER, "clip-fs.glsl");
 
 	Shaders->addAttribute(mgl::POSITION_ATTRIBUTE, POSITION);
-	Shaders->addUniform("Matrix");
-	Shaders->addUniform("inColor");
+	Shaders->addUniform(mgl::MODEL_MATRIX);
+	Shaders->addUniform(mgl::COLOR_ATTRIBUTE);
 
 	Shaders->create();
 }
@@ -78,71 +78,73 @@ void MyApp::createEntities()
 	std::ifstream meshFile("assets/objects/meshes.json");
 	json meshData = json::parse(meshFile);
 
-	for(json::iterator it = meshData.begin() ; it != meshData.end(); ++it) {
+	for (json::iterator it = meshData.begin(); it != meshData.end(); ++it)
+	{
 		std::string id = it.key();
 		std::cout << "[LOADING MESH] " << id << std::endl;
+
+		// Load vertex data
 		json vertexData = it.value()["vertex"];
 		size_t n_vertex = vertexData.size();
-		tengine::Point points[n_vertex]({{0,0,0,0}});
-		for(int i = 0; i < n_vertex; ++i) {
-			std::cout << "( " << vertexData[i][0].get<float>() << ", " << vertexData[i][1].get<float>() << ")" << std::endl;
-			points[i] = {vertexData[i][0].get<float>(), vertexData[i][1].get<float>(), 0.0f, 1.0f};
+		std::vector<tengine::Point> vertexes(n_vertex);
+		for (int i = 0; i < n_vertex; ++i)
+		{
+			vertexes[i] = {vertexData[i][0].get<float>(), vertexData[i][1].get<float>(), 0.0f, 1.0f};
 		}
+
+		// Load index data
 		json indexData = it.value()["index"];
 		size_t n_index = indexData.size();
-		GLubyte indexes[n_index];
-		for(int i = 0; i < n_index; ++i) {
-
-			std::cout << indexData[i].get<uint>() << std::endl;
-			indexes[i] = indexData[i].get<uint>();
+		std::vector<GLubyte> indexes(n_index);
+		for (int i = 0; i < n_index; ++i)
+		{
+			indexes[i] = indexData[i].get<GLuint>();
 		}
 
-
+		// Create the mesh
 		meshes[id] = std::make_shared<tengine::Mesh>(n_index);
-		meshes[id]->createVertexBuffer(points, sizeof(points));
-		meshes[id]->createIndexBuffer(indexes, sizeof(indexes));
+		meshes[id]->createVertexBuffer(vertexes.data(), vertexes.size() * sizeof(tengine::Point));
+		meshes[id]->createIndexBuffer(indexes.data(), indexes.size() * sizeof(GLubyte));
 		meshes[id]->createArrayBuffer(&positionAttr, 1);
 	}
-
 
 	std::ifstream entityFile("assets/objects/entities.json");
 	json entityData = json::parse(entityFile);
 
-	for(json::iterator it = entityData.begin() ; it != entityData.end(); ++it) {
+	for (json::iterator it = entityData.begin(); it != entityData.end(); ++it)
+	{
 		std::string id = it.key();
 		std::cout << "[LOADING ENTITY] " << id << std::endl;
 
 		json data = it.value();
+
+		// Get the previously created mesh
 		std::shared_ptr<tengine::Mesh> mesh = meshes[data["mesh"].get<std::string>()];
-		
+
+		// Get position, rotation and scale
 		json posData = data["position"];
 		glm::vec2 position(posData[0].get<float>(), posData[1].get<float>());
-
-		
 		float rotation = glm::radians(data["rotation"].get<float>());
 		float scale = data["scale"].get<float>();
 
-		std::cout << glm::to_string(position) << std::endl;
-		std::cout << rotation << std::endl;
-		std::cout << scale << std::endl;
-
-		tengine::Transform transform(position, rotation, scale);
-
+		// Get color
 		json colorData = data["color"];
-
 		tengine::Color color = {0};
-
-		for(int i = 0; i < 4; ++i) {
+		for (int i = 0; i < 4; ++i)
+		{
 			color.RGBA[i] = colorData[i].get<int>() / 255.0f;
-			std::cout << color.RGBA[i] << std::endl;
 		}
-		
-		entities[id] = std::make_shared<tengine::Entity>(color, transform, *mesh, Shaders);
+
+		// Create the entity
+		entities[id] = std::make_shared<tengine::Entity>();
+		entities[id]->attachComponent(std::make_shared<tengine::MeshInstance>(color, Shaders, mesh));
+		entities[id]->attachComponent(std::make_shared<tengine::Transform>(position, rotation, scale));
 	}
 }
 
 void MyApp::destroyBufferObjects()
 {
+	// Destructors take care of destroying buffer objects
 	entities.clear();
 }
 
@@ -150,7 +152,8 @@ void MyApp::destroyBufferObjects()
 
 void MyApp::drawScene()
 {
-	for(auto& entity : entities) {
+	for (auto &entity : entities)
+	{
 		entity.second->draw();
 	}
 }

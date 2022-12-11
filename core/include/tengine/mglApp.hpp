@@ -44,7 +44,7 @@ namespace mgl
     {
     public:
         unsigned short WindowWidth, WindowHeight;
-         
+
         static Engine &getInstance();
 
         void setApp(App *app);
@@ -54,7 +54,7 @@ namespace mgl
                        int vsync);
         void init();
         void run();
-        
+
     protected:
         virtual ~Engine();
 
@@ -73,7 +73,6 @@ namespace mgl
         void setupGLEW();
         void setupOpenGL();
         void setupCallbacks();
-        
 
     public:
         Engine(Engine const &) = delete;

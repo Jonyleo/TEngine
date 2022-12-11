@@ -1,5 +1,7 @@
 #include <tengine/tengine.hpp>
 
+#include <glm/gtc/type_ptr.hpp>
+
 void tengine::Transform::rotateTo(float angle)
 {
     rotation = angle;
@@ -31,33 +33,35 @@ void tengine::Transform::scaleBy(float factor)
     changed = true;
 }
 
-glm::mat4& tengine::Transform::calcTransformMatrix()
+glm::mat4 &tengine::Transform::calcTransformMatrix()
 {
-    float xScale = mgl::Engine::getInstance().WindowWidth / (float) mgl::Engine::getInstance().WindowHeight;
+    float xScale = mgl::Engine::getInstance().WindowWidth / (float)mgl::Engine::getInstance().WindowHeight;
 
-    if(xScale == lastScale && !changed)
+    if (xScale == lastScale && !changed)
         return transformMatrix;
 
-    std::cout << xScale << std::endl;
     glm::mat4 translationM = glm::translate(glm::vec3(position[0] / xScale, position[1], 0.0f));
     glm::mat4 rotationM = glm::rotate(rotation, glm::vec3(0.0f, 0.0f, 1.0f));
     glm::mat4 scaleM = glm::scale(glm::vec3(scale / xScale, scale, 1.0f));
 
-
     transformMatrix = translationM * (rotationM * scaleM);
-    
+
     /*glm::translate(
         glm::rotate(
             glm::scale(glm::vec3(scale / xScale, scale, 1.0f)),
             rotation,
-            glm::vec3(0.0f, 0.0f, 1.0f) 
+            glm::vec3(0.0f, 0.0f, 1.0f)
         ),
         glm::vec3(position, 0.0f)
     );*/
-    
 
     changed = false;
     lastScale = xScale;
 
     return transformMatrix;
+}
+
+void tengine::Transform::preDraw()
+{
+    tengine::ShaderManager::getInstance().setMat4(mgl::MODEL_MATRIX, calcTransformMatrix());
 }

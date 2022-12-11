@@ -19,9 +19,13 @@ namespace tengine
     struct Point
     {
         GLfloat XYZW[4] = {0};
+
+        Point() : XYZW({0}) {}
+        Point(GLfloat x1, GLfloat x2, GLfloat x3, GLfloat x4) : XYZW{x1, x2, x3, x4} {}
     };
 
-    struct VertexAttrInfo {
+    struct VertexAttrInfo
+    {
         GLuint index;
         GLint size;
         GLenum type;

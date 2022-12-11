@@ -6,12 +6,11 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/string_cast.hpp>
 
-#include "mgl.hpp"
-#include "DataStructs.hpp"
+#include "tengine.hpp"
 
 namespace tengine
 {
-    class Transform
+    class Transform : public tengine::Component
     {
     private:
         float rotation; // radians
@@ -35,6 +34,7 @@ namespace tengine
         void scaleTo(float scale);
         void scaleBy(float factor);
         glm::mat4 &calcTransformMatrix();
+        virtual void preDraw();
     };
 }
 #endif

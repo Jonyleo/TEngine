@@ -161,7 +161,6 @@ namespace mgl
         }
         glEnable(GL_DEBUG_OUTPUT);
         glDebugMessageCallback(glErrorCallback, nullptr);
-
     }
 
     void displayInfo()
@@ -221,8 +220,5 @@ namespace mgl
         glfwTerminate();
     }
 
-    
-
-    
     ////////////////////////////////////////////////////////////////////////////////
 } // namespace mgl
