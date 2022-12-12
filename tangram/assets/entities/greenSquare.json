@@ -1,0 +1,16 @@
+{
+    "mesh": "square",
+    "position": [
+        -0.39644660940672627,
+        0.35355339059327373
+    ],
+    "rotation": 0,
+    "scale": 1,
+    "color": [
+        0,
+        255,
+        0,
+        255
+    ],
+    "shader": "plain-color"
+}

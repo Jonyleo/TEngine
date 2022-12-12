@@ -5,7 +5,7 @@
 
 #include <glm/glm.hpp>
 
-#include "tengine.hpp"
+#include "mglShader.hpp"
 
 namespace tengine
 {
@@ -26,6 +26,9 @@ namespace tengine
         void setVec4(const std::string &name, const glm::vec4 &value);
 
         void setCurrentShader(std::shared_ptr<mgl::ShaderProgram> shader);
+
+        ShaderManager(ShaderManager const &) = delete;
+        void operator=(ShaderManager const &) = delete;
     };
 }
 

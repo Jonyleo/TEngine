@@ -6,7 +6,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/string_cast.hpp>
 
-#include "tengine.hpp"
+#include "Entity.hpp"
 
 namespace tengine
 {
@@ -21,11 +21,12 @@ namespace tengine
         bool changed = true;
         float lastScale = -1;
         glm::mat4 transformMatrix;
+        glm::mat4 worldMatrix;
 
     public:
-        Transform() : Transform({0, 0}, 0, 1) {}
-        Transform(glm::vec2 position, float rotation, float scale) :
-            position(position), rotation(rotation), scale(scale) {}
+        Transform(tengine::Entity &parent) : Transform(parent, {0, 0}, 0, 1) {}
+        Transform(tengine::Entity &parent, glm::vec2 position, float rotation, float scale) :
+            Component(parent), position(position), rotation(rotation), scale(scale) {}
 
         void rotateTo(float angle);
         void rotateBy(float angle);

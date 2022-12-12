@@ -1,6 +1,9 @@
 #ifndef __MESH_HPP__
 #define __MESH_HPP__
 
+#include <memory>
+#include <string>
+
 #include <GL/glew.h>
 
 #include "DataStructs.hpp"
@@ -17,6 +20,8 @@ namespace tengine
     public:
         Mesh(size_t n_triangles);
         ~Mesh();
+
+        static std::shared_ptr<Mesh> load(std::string& name);
 
         void createVertexBuffer(const void *data, size_t size);
         void createIndexBuffer(const void *data, size_t size);

@@ -1,5 +1,14 @@
+#include <fstream>
+#include <memory>
+
+#include <tengine/json.hpp>
+using json = nlohmann::json;
+
 #include <tengine/Mesh.hpp>
 #include <tengine/Entity.hpp>
+#include <tengine/DataStructs.hpp>
+
+#include <tengine/mglConventions.hpp>
 
 tengine::Mesh::Mesh(size_t n_triangles)
 {
@@ -17,6 +26,39 @@ tengine::Mesh::~Mesh()
     }
 
     glDeleteBuffers(2, vboId);
+}
+
+
+std::shared_ptr<tengine::Mesh> tengine::Mesh::load(std::string& name) {
+    std::ifstream meshFile("assets/meshes/" + name + ".json");
+	json meshData = json::parse(meshFile);
+
+    // Load vertex data
+    json vertexData = meshData["vertex"];
+    size_t n_vertex = vertexData.size();
+    std::vector<tengine::Point> vertexes(n_vertex);
+    for (int i = 0; i < n_vertex; ++i)
+    {
+        vertexes[i] = {vertexData[i][0].get<float>(), vertexData[i][1].get<float>(), 0.0f, 1.0f};
+    }
+
+    // Load index data
+    json indexData = meshData["index"];
+    size_t n_index = indexData.size();
+    std::vector<GLubyte> indexes(n_index);
+    for (int i = 0; i < n_index; ++i)
+    {
+        indexes[i] = indexData[i].get<GLuint>();
+    }
+
+    tengine::VertexAttrInfo positionAttr = {mgl::POSITION_INDEX, 4, GL_FLOAT, GL_FALSE, sizeof(tengine::Point), 0};
+
+    // Create the mesh
+    std::shared_ptr<tengine::Mesh> mesh = std::make_shared<tengine::Mesh>(n_index);
+    mesh->createVertexBuffer(vertexes.data(), vertexes.size() * sizeof(tengine::Point));
+    mesh->createIndexBuffer(indexes.data(), indexes.size() * sizeof(GLubyte));
+    mesh->createArrayBuffer(&positionAttr, 1);
+    return mesh;
 }
 
 void tengine::Mesh::createVertexBuffer(const void *data, size_t size)

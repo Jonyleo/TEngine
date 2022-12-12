@@ -1,7 +1,12 @@
 #include <cassert>
 #include <fstream>
+#include <memory>
 
-#include "tengine/mglShader.hpp"
+#include <tengine/json.hpp>
+using json = nlohmann::json;
+
+#include <tengine/mglConventions.hpp>
+#include <tengine/mglShader.hpp>
 
 namespace mgl
 {
@@ -50,6 +55,7 @@ namespace mgl
             std::cerr << "[LINK] " << std::endl
                       << log << std::endl;
             delete[] log;
+            assert(0);
         }
     }
 
@@ -65,7 +71,7 @@ namespace mgl
                                   const std::string &filename)
     {
         const GLuint shader_id = glCreateShader(shader_type);
-        const std::string scode = read("assets/shaders/" + filename);
+        const std::string scode = read(filename);
         const GLchar *code = scode.c_str();
         glShaderSource(shader_id, 1, &code, 0);
         glCompileShader(shader_id);
@@ -137,4 +143,31 @@ namespace mgl
     void ShaderProgram::unbind() { glUseProgram(0); }
 
     ////////////////////////////////////////////////////////////////////////////////
+
+    std::shared_ptr<ShaderProgram> ShaderProgram::load(std::string& name) {
+        std::shared_ptr<ShaderProgram> shader = std::make_shared<ShaderProgram>();
+
+        std::ifstream shaderFile("assets/shaders/" + name + ".json");
+        json shaderData = json::parse(shaderFile);
+
+        std::string fsName = shaderData["fragment"].get<std::string>();
+        std::string vsName = shaderData["vertex"].get<std::string>();
+
+        shader->addShader(GL_FRAGMENT_SHADER, fsName);
+        shader->addShader(GL_VERTEX_SHADER, vsName);
+
+        shader->addAttribute(mgl::POSITION_ATTRIBUTE, mgl::POSITION_INDEX);
+
+        json uniformData = shaderData["uniforms"];
+
+        for(int i = 0; i < uniformData.size(); ++i) {
+            std::string uniformName = uniformData[i].get<std::string>();
+
+            shader->addUniform(uniformName);
+        }
+
+	    shader->create();        
+        
+        return shader;
+    }
 } // namespace engine

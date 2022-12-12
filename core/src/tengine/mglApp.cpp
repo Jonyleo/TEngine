@@ -1,7 +1,13 @@
 #include <iostream>
+#include <set>
+#include <string>
 
-#include "tengine/mglApp.hpp"
-#include "tengine/mglError.hpp"
+#include <tengine/mglApp.hpp>
+#include <tengine/mglError.hpp>
+
+#include <tengine/Resources.hpp>
+#include <tengine/Scene.hpp>
+
 
 namespace mgl
 {
@@ -62,7 +68,7 @@ namespace mgl
         WindowWidth = 640, WindowHeight = 480;
         GlMajor = 3, GlMinor = 3;
         Fullscreen = 0, Vsync = 0;
-        WindowTitle = "OpenGL App GLFW Window 2022(c) Carlos Martinho";
+        WindowTitle = "Tangram Project";
     }
 
     Engine::~Engine(void) {}
@@ -135,19 +141,6 @@ namespace mgl
         setupCallbacks();
     }
 
-    static void GLAPIENTRY glErrorCallback(GLenum source,
-                                           GLenum type,
-                                           GLuint id,
-                                           GLenum severity,
-                                           GLsizei length,
-                                           const GLchar *message,
-                                           const void *param)
-    {
-
-        // TODO switch megacity
-        std::cerr << "[" << severity << "]" << message << std::endl;
-    }
-
     void Engine::setupGLEW()
     {
         glewExperimental = GL_TRUE;
@@ -159,8 +152,6 @@ namespace mgl
             std::cerr << "ERROR glewInit: " << glewGetString(result) << std::endl;
             exit(EXIT_FAILURE);
         }
-        glEnable(GL_DEBUG_OUTPUT);
-        glDebugMessageCallback(glErrorCallback, nullptr);
     }
 
     void displayInfo()
@@ -189,11 +180,14 @@ namespace mgl
         glViewport(0, 0, WindowWidth, WindowHeight);
     }
 
-    void Engine::init()
+    void Engine::init(std::string sceneName)
     {
         setupGLFW();
         setupGLEW();
         setupOpenGL();
+
+        currentScene = tengine::ResourceManager::getInstance().load<tengine::Scene>(sceneName);
+
         GlApp->initCallback(Window);
 #ifdef DEBUG
         displayInfo();
@@ -211,10 +205,12 @@ namespace mgl
             double time = glfwGetTime();
             double elapsed_time = time - last_time;
             last_time = time;
+            currentScene->update(elapsed_time);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-            GlApp->displayCallback(Window, elapsed_time);
+            currentScene->draw();
             glfwSwapBuffers(Window);
             glfwPollEvents();
+
         }
         glfwDestroyWindow(Window);
         glfwTerminate();

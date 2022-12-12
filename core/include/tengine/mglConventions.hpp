@@ -30,6 +30,8 @@ namespace mgl
     const std::string BITANGENT_ATTRIBUTE = "inBitangent";
     const std::string COLOR_ATTRIBUTE = "inColor";
 
+    const int POSITION_INDEX = 0;
+
     ////////////////////////////////////////////////////////////////////////////////
 } // namespace mgl
 

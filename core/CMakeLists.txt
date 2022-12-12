@@ -33,6 +33,8 @@ set(TEngine_CORE_INCLUDE
 	"include/tengine/Transform.hpp"
 	"include/tengine/MeshInstance.hpp"
 	"include/tengine/ShaderManager.hpp"
+	"include/tengine/Scene.hpp"
+	"include/tengine/Resources.hpp"
 
 	"include/tengine/json.hpp"
 )
@@ -49,6 +51,8 @@ set(TEngine_CORE_SOURCE
 	"src/tengine/Transform.cpp"
 	"src/tengine/MeshInstance.cpp"
 	"src/tengine/ShaderManager.cpp"
+	"src/tengine/Scene.cpp"
+	
 )
 
 add_library(tengine-core ${TEngine_CORE_SOURCE} ${TEngine_CORE_INCLUDE})

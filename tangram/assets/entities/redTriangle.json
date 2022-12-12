@@ -1,0 +1,16 @@
+{
+    "mesh": "triangle",
+    "position": [
+        -0.8964466094067263,
+        0.35355339059327373
+    ],
+    "rotation": 180,
+    "scale": 1,
+    "color": [
+        255,
+        12,
+        12,
+        255
+    ],
+    "shader": "plain-color"
+}

@@ -23,6 +23,8 @@
 #include <glm/gtx/string_cast.hpp>
 
 #include <tengine/tengine.hpp>
+#include <tengine/Resources.hpp>
+
 
 #include <tengine/json.hpp>
 
@@ -35,138 +37,44 @@ class MyApp : public mgl::App
 
 public:
 	void initCallback(GLFWwindow *win) override;
-	void displayCallback(GLFWwindow *win, double elapsed) override;
 	void windowCloseCallback(GLFWwindow *win) override;
 	void windowSizeCallback(GLFWwindow *win, int width, int height) override;
-
-private:
-	const GLuint POSITION = 0;
-	std::shared_ptr<mgl::ShaderProgram> Shaders;
-
-	void createShaderProgram();
-	void createEntities();
-	void destroyBufferObjects();
-	void drawScene();
+	void keyCallback(GLFWwindow *window, int key, int scancode,
+                                 int action, int mods);
 };
 
-//////////////////////////////////////////////////////////////////////// SHADERs
+int directionX = 0;
+int directionY = 0;
+int rotate = 0;
+int scale = 0;
 
-void MyApp::createShaderProgram()
+class TangramScript : public tengine::Component
 {
+	float speed = 0;
 
-	Shaders = std::make_shared<mgl::ShaderProgram>();
+	public:
+	void update(float elapsedTime) {
+		std::shared_ptr<tengine::Transform> trans = parent.getComponent<tengine::Transform>();
+		
+		trans->rotateBy(glm::radians(360.0f) * elapsedTime * rotate);
+		glm::vec2 move(3 * elapsedTime*directionX, 3*elapsedTime*directionY);
+		trans->moveBy(move);
+		trans->scaleBy(1 + 0.1 * scale);
 
-	Shaders->addShader(GL_VERTEX_SHADER, "clip-vs.glsl");
-	Shaders->addShader(GL_FRAGMENT_SHADER, "clip-fs.glsl");
-
-	Shaders->addAttribute(mgl::POSITION_ATTRIBUTE, POSITION);
-	Shaders->addUniform(mgl::MODEL_MATRIX);
-	Shaders->addUniform(mgl::COLOR_ATTRIBUTE);
-
-	Shaders->create();
-}
-
-//////////////////////////////////////////////////////////////////// VAOs & VBOs
-
-std::map<std::string, std::shared_ptr<tengine::Mesh>> meshes;
-std::map<std::string, std::shared_ptr<tengine::Entity>> entities;
-
-void MyApp::createEntities(){
-
-	tengine::VertexAttrInfo positionAttr = {POSITION, 4, GL_FLOAT, GL_FALSE, sizeof(tengine::Point), 0};
-
-	std::ifstream meshFile("assets/objects/meshes.json");
-	json meshData = json::parse(meshFile);
-
-	for (json::iterator it = meshData.begin(); it != meshData.end(); ++it)
-	{
-		std::string id = it.key();
-		std::cout << "[LOADING MESH] " << id << std::endl;
-
-		// Load vertex data
-		json vertexData = it.value()["vertex"];
-		size_t n_vertex = vertexData.size();
-		std::vector<tengine::Point> vertexes(n_vertex);
-		for (int i = 0; i < n_vertex; ++i)
-		{
-			vertexes[i] = {vertexData[i][0].get<float>(), vertexData[i][1].get<float>(), 0.0f, 1.0f};
-		}
-
-		// Load index data
-		json indexData = it.value()["index"];
-		size_t n_index = indexData.size();
-		std::vector<GLubyte> indexes(n_index);
-		for (int i = 0; i < n_index; ++i)
-		{
-			indexes[i] = indexData[i].get<GLuint>();
-		}
-
-		// Create the mesh
-		meshes[id] = std::make_shared<tengine::Mesh>(n_index);
-		meshes[id]->createVertexBuffer(vertexes.data(), vertexes.size() * sizeof(tengine::Point));
-		meshes[id]->createIndexBuffer(indexes.data(), indexes.size() * sizeof(GLubyte));
-		meshes[id]->createArrayBuffer(&positionAttr, 1);
-		}
-
-	std::ifstream entityFile("assets/objects/entities.json");
-	json entityData = json::parse(entityFile);
-
-	for (json::iterator it = entityData.begin(); it != entityData.end(); ++it)
-	{
-		std::string id = it.key();
-		std::cout << "[LOADING ENTITY] " << id << std::endl;
-
-		json data = it.value();
-
-		// Get the previously created mesh
-		std::shared_ptr<tengine::Mesh> mesh = meshes[data["mesh"].get<std::string>()];
-
-		// Get position, rotation and scale
-		json posData = data["position"];
-		glm::vec2 position(posData[0].get<float>(), posData[1].get<float>());
-		float rotation = glm::radians(data["rotation"].get<float>());
-		float scale = data["scale"].get<float>();
-
-		// Get color
-		json colorData = data["color"];
-		tengine::Color color = {0};
-		for (int i = 0; i < 4; ++i)
-		{
-			color.RGBA[i] = colorData[i].get<int>() / 255.0f;
-		}
-
-		// Create the entity
-		entities[id] = std::make_shared<tengine::Entity>();
-		entities[id]->attachComponent(std::make_shared<tengine::MeshInstance>(color, Shaders, mesh));
-		entities[id]->attachComponent(std::make_shared<tengine::Transform>(position, rotation, scale));
 	}
-}
 
-void MyApp::destroyBufferObjects()
-{
-	// Destructors take care of destroying buffer objects
-	entities.clear();
-}
-
-////////////////////////////////////////////////////////////////////////// SCENE
-
-void MyApp::drawScene()
-{
-	for (auto &entity : entities)
-	{
-		entity.second->draw();
-	}
-}
+	TangramScript(tengine::Entity &entity) : Component(entity) {}
+};
 
 ////////////////////////////////////////////////////////////////////// CALLBACKS
 
 void MyApp::initCallback(GLFWwindow *win)
 {
-	createShaderProgram();
-	createEntities();
+	tengine::Scene& scene = mgl::Engine::getInstance().getScene();
+	scene.getRoot().attachComponent(std::make_shared<TangramScript>(scene.getRoot()));
 }
 
-void MyApp::windowCloseCallback(GLFWwindow *win) { destroyBufferObjects(); }
+void MyApp::windowCloseCallback(GLFWwindow *win) { tengine::ResourceManager::getInstance().clear(); }
 
 void MyApp::windowSizeCallback(GLFWwindow *win, int winx, int winy)
 {
@@ -175,7 +83,63 @@ void MyApp::windowSizeCallback(GLFWwindow *win, int winx, int winy)
 	mgl::Engine::getInstance().WindowWidth = winx;
 }
 
-void MyApp::displayCallback(GLFWwindow *win, double elapsed) { drawScene(); }
+void MyApp::keyCallback(GLFWwindow *window, int key, int scancode,
+                                 int action, int mods) { 
+
+	if(action == GLFW_PRESS) {
+		switch(key) {
+			case GLFW_KEY_W:
+				directionY += 1;
+				break;
+			case GLFW_KEY_S:
+				directionY -= 1;
+				break;
+			case GLFW_KEY_A:
+				directionX -= 1;
+				break;
+			case GLFW_KEY_D:
+				directionX += 1;
+				break;
+			
+			case GLFW_KEY_SPACE:
+				rotate = 1;
+				break;
+			case GLFW_KEY_Q:
+				scale -= 1;
+				break;
+			case GLFW_KEY_E:
+				scale += 1;
+				break;
+		}
+	} 
+	if(action == GLFW_RELEASE) {
+		switch(key) {
+			case GLFW_KEY_W:
+				directionY -= 1;
+				break;
+			case GLFW_KEY_S:
+				directionY += 1;
+				break;
+			case GLFW_KEY_A:
+				directionX += 1;
+				break;
+			case GLFW_KEY_D:
+				directionX -= 1;
+				break;
+			
+			case GLFW_KEY_SPACE:
+				rotate = 0;
+				break;
+			case GLFW_KEY_Q:
+				scale += 1;
+				break;
+			case GLFW_KEY_E:
+				scale -= 1;
+				break;
+		}
+	}
+		
+}
 
 /////////////////////////////////////////////////////////////////////////// MAIN
 
@@ -184,8 +148,8 @@ int main(int argc, char *argv[])
 	mgl::Engine &engine = mgl::Engine::getInstance();
 	engine.setApp(new MyApp());
 	engine.setOpenGL(4, 6);
-	engine.setWindow(1200, 600, "Tangram || Group 1 [ASS 2]", 0, 1);
-	engine.init();
+	engine.setWindow(600, 600, "Tangram || Group 1 [ASS 2]", 0, 1);
+	engine.init("tangram");
 	engine.run();
 	exit(EXIT_SUCCESS);
 }

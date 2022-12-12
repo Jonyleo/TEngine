@@ -1,0 +1,17 @@
+{
+    "position": [
+        0,
+        0
+    ],
+    "rotation": 0,
+    "scale": 1,
+    "children": [
+        "greenSquare",
+        "yellowTrapezoid",
+        "pinkTriangle",
+        "redTriangle",
+        "blueTriangle",
+        "orangeTriangle",
+        "purpleTriangle"
+    ]
+}

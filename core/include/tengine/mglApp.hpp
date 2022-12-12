@@ -9,9 +9,13 @@
 #ifndef MGL_APP_HPP
 #define MGL_APP_HPP
 
+#include <memory>
+
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
+
+#include "Scene.hpp"
 
 namespace mgl
 {
@@ -52,8 +56,10 @@ namespace mgl
         void setOpenGL(int major, int minor);
         void setWindow(int width, int height, const char *title, int fullscreen,
                        int vsync);
-        void init();
+        void init(std::string sceneName);
         void run();
+
+        tengine::Scene& getScene() { return *currentScene; }
 
     protected:
         virtual ~Engine();
@@ -67,6 +73,7 @@ namespace mgl
         const char *WindowTitle;
         int Fullscreen;
         int Vsync;
+        std::shared_ptr<tengine::Scene> currentScene;
 
         void setupWindow();
         void setupGLFW();

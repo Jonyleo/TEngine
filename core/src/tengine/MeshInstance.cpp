@@ -23,6 +23,7 @@ void tengine::MeshInstance::draw()
 
 void tengine::MeshInstance::unbind()
 {
+    tengine::ShaderManager::getInstance().setCurrentShader(nullptr);
     mesh->unbind();
     shader->unbind();
 }

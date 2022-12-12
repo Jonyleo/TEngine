@@ -4,7 +4,7 @@
 #include <memory>
 #include <vector>
 
-#include "tengine.hpp"
+#include "Component.hpp"
 
 namespace tengine
 {
@@ -14,15 +14,36 @@ namespace tengine
     {
     private:
         std::vector<pComponent> components;
+        std::vector<std::shared_ptr<Entity>> children;
+        Entity *parent = nullptr;
 
     public:
-        Entity(std::vector<pComponent> components)
-            : components(components) {}
+        
+        bool visible = true;
+
         Entity() {}
 
+        static std::shared_ptr<Entity> load(std::string &name);
+
         void attachComponent(pComponent component);
+        void addChild(std::shared_ptr<Entity> child);
+        void setParent(Entity *parent);
 
         void draw();
+        void update(float timeElapsed);
+
+        template<typename T>
+        std::shared_ptr<T> getComponent() {
+            for(auto & comp : components) {
+                std::shared_ptr<T> ret = std::dynamic_pointer_cast<T>(comp);
+
+                if(ret != nullptr)
+                    return ret;
+            }
+            return nullptr;
+        }
+
+        Entity* getParent() { return parent; }
     };
 }
 #endif

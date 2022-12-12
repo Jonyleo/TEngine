@@ -3,7 +3,11 @@
 
 #include <memory>
 
-#include "tengine.hpp"
+#include "mglShader.hpp"
+
+#include "DataStructs.hpp"
+#include "Mesh.hpp"
+#include "Entity.hpp"
 
 namespace tengine
 {
@@ -15,10 +19,11 @@ namespace tengine
         std::shared_ptr<tengine::Mesh> mesh;
 
     public:
-        MeshInstance(tengine::Color color,
+        MeshInstance(tengine::Entity& parent,
+                     tengine::Color color,
                      std::shared_ptr<mgl::ShaderProgram> shader,
                      std::shared_ptr<tengine::Mesh> mesh)
-            : color(color), shader(shader), mesh(mesh) {}
+            : Component(parent), color(color), shader(shader), mesh(mesh) {}
 
         virtual void bind();
         virtual void preDraw();
