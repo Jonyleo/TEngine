@@ -1,11 +1,11 @@
 {
     "mesh": "triangle",
     "position": [
-        -1.75,
-        0.5
+        -0.875,
+        0.25
     ],
     "rotation": 0,
-    "scale": 1,
+    "scale": 0.25,
     "color": [
         171,
         78,

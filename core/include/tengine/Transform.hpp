@@ -12,16 +12,16 @@ namespace tengine
 {
     class Transform : public tengine::Component
     {
-    private:
+    protected:
         float rotation; // radians
         float scale;
         glm::vec2 position; // clipSpace
 
         // transformMatrix Cache
         bool changed = true;
+        bool isRoot = false;
         float lastScale = -1;
         glm::mat4 transformMatrix;
-        glm::mat4 worldMatrix;
 
     public:
         Transform(tengine::Entity &parent) : Transform(parent, {0, 0}, 0, 1) {}
@@ -36,6 +36,8 @@ namespace tengine
         void scaleBy(float factor);
         glm::mat4 &calcTransformMatrix();
         virtual void preDraw();
+
+        void setRoot(bool value);
     };
 }
 #endif

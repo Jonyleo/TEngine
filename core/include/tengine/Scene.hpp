@@ -11,7 +11,7 @@ namespace tengine {
             std::shared_ptr<tengine::Entity> root;
 
         public:
-            Scene(std::shared_ptr<tengine::Entity> root) : root(root) {}
+            Scene(std::shared_ptr<tengine::Entity> root);
             ~Scene() {}
 
             static std::shared_ptr<Scene> load(std::string &name);
