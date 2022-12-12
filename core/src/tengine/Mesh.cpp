@@ -109,6 +109,5 @@ void tengine::Mesh::unbind()
 void tengine::Mesh::draw()
 {
     glDrawElements(GL_TRIANGLES, elements, GL_UNSIGNED_BYTE, (GLvoid *)0);
-
     //glDrawArrays(GL_TRIANGLES, 0, elements);
 }
