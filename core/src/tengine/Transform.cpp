@@ -56,6 +56,7 @@ glm::mat4 &tengine::Transform::calcTransformMatrix()
 
     if (isRoot)
     {
+        // TODO: This should be done in a camera
         float aspectRatio = mgl::Engine::getInstance().WindowWidth / (float)mgl::Engine::getInstance().WindowHeight;
 
         transformMatrix = glm::ortho(-aspectRatio, aspectRatio, -1.0f, 1.0f) * transformMatrix;
