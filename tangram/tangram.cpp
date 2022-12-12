@@ -10,25 +10,13 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-#include <iostream>
-#include <vector>
-#include <fstream>
-
 #include <GL/glew.h>
-#include <GLFW/glfw3.h>
 
-#include <glm/glm.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtx/transform.hpp>
-#include <glm/gtx/string_cast.hpp>
-
-#include <tengine/tengine.hpp>
+#include <tengine/mglApp.hpp>
 #include <tengine/Resources.hpp>
-
-
-#include <tengine/json.hpp>
-
-using json = nlohmann::json;
+#include <tengine/Entity.hpp>
+#include <tengine/Transform.hpp>
+#include <tengine/Component.hpp>
 
 ////////////////////////////////////////////////////////////////////////// MYAPP
 
@@ -41,6 +29,8 @@ public:
 	void windowSizeCallback(GLFWwindow *win, int width, int height) override;
 	void keyCallback(GLFWwindow *window, int key, int scancode,
                                  int action, int mods);
+	void scrollCallback(GLFWwindow *window, double xoffset,
+                                    double yoffset);								 							 
 };
 
 int directionX = 0;
@@ -59,7 +49,8 @@ class TangramScript : public tengine::Component
 		trans->rotateBy(glm::radians(360.0f) * elapsedTime * rotate);
 		glm::vec2 move(3 * elapsedTime*directionX, 3*elapsedTime*directionY);
 		trans->moveBy(move);
-		trans->scaleBy(1 + 0.1 * scale);
+		trans->scaleBy(1 + 0.3 * scale);
+		scale = 0;
 
 	}
 
@@ -101,14 +92,15 @@ void MyApp::keyCallback(GLFWwindow *window, int key, int scancode,
 				directionX += 1;
 				break;
 			
-			case GLFW_KEY_SPACE:
-				rotate = 1;
+			case GLFW_KEY_E:
+				rotate -= 1;
 				break;
 			case GLFW_KEY_Q:
-				scale -= 1;
+				rotate += 1;
 				break;
-			case GLFW_KEY_E:
-				scale += 1;
+
+			case GLFW_KEY_ESCAPE:
+				mgl::Engine::getInstance().close();
 				break;
 		}
 	} 
@@ -127,18 +119,19 @@ void MyApp::keyCallback(GLFWwindow *window, int key, int scancode,
 				directionX -= 1;
 				break;
 			
-			case GLFW_KEY_SPACE:
-				rotate = 0;
+			case GLFW_KEY_E:
+				rotate += 1;
 				break;
 			case GLFW_KEY_Q:
-				scale += 1;
-				break;
-			case GLFW_KEY_E:
-				scale -= 1;
+				rotate -= 1;
 				break;
 		}
 	}
-		
+}
+
+void MyApp::scrollCallback(GLFWwindow *window, double xoffset, double yoffset) 
+{
+	scale += yoffset;
 }
 
 /////////////////////////////////////////////////////////////////////////// MAIN

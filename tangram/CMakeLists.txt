@@ -17,11 +17,10 @@ elseif(UNIX AND NOT APPLE)
 endif()
 
 add_executable(${PROJECT_NAME} "tangram.cpp")
-if(MSVC)
-	target_include_directories(${PROJECT_NAME} 
-		PUBLIC "${CMAKE_SOURCE_DIR}/dependencies/include"
-	)
-endif()
+
+target_include_directories(${PROJECT_NAME} 
+	PUBLIC "${CMAKE_SOURCE_DIR}/dependencies/include"
+)
 
 target_link_libraries(${PROJECT_NAME}
     PUBLIC tengine-core

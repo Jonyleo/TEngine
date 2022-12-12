@@ -1,7 +1,7 @@
 #include <fstream>
 #include <memory>
 
-#include <tengine/json.hpp>
+#include <nlohmann/json.hpp>
 using json = nlohmann::json;
 
 #include <tengine/Scene.hpp>

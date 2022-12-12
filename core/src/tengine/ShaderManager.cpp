@@ -1,4 +1,6 @@
-#include <tengine/tengine.hpp>
+#include <GL/glew.h>
+
+#include <tengine/ShaderManager.hpp>
 
 #include <glm/gtc/type_ptr.hpp>
 

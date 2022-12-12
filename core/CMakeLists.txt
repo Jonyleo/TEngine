@@ -35,8 +35,6 @@ set(TEngine_CORE_INCLUDE
 	"include/tengine/ShaderManager.hpp"
 	"include/tengine/Scene.hpp"
 	"include/tengine/Resources.hpp"
-
-	"include/tengine/json.hpp"
 )
 
 set(TEngine_CORE_SOURCE
@@ -61,11 +59,9 @@ target_include_directories(tengine-core
 	PRIVATE "src"
 )
 
-if(MSVC)
-	target_include_directories(tengine-core 
-		PUBLIC "${CMAKE_SOURCE_DIR}/dependencies/include"
-	)
-endif()
+target_include_directories(tengine-core 
+	PUBLIC "${CMAKE_SOURCE_DIR}/dependencies/include"
+)
 
 if(MSVC) 
 	target_link_libraries(tengine-core

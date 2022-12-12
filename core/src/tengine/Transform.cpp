@@ -1,6 +1,10 @@
-#include <tengine/tengine.hpp>
-
 #include <glm/gtc/type_ptr.hpp>
+
+#include <tengine/mglApp.hpp>
+#include <tengine/mglConventions.hpp>
+#include <tengine/Transform.hpp>
+#include <tengine/ShaderManager.hpp>
+
 
 void tengine::Transform::rotateTo(float angle)
 {
@@ -52,9 +56,9 @@ glm::mat4 &tengine::Transform::calcTransformMatrix()
     changed = false;
 
     if(isRoot) {
-        float screenScale = mgl::Engine::getInstance().WindowHeight / (float) mgl::Engine::getInstance().WindowWidth ;
-
-        transformMatrix = glm::scale(transformMatrix, glm::vec3(screenScale, screenScale, 1.0f));
+        float aspectRatio = mgl::Engine::getInstance().WindowWidth / (float) mgl::Engine::getInstance().WindowHeight ;
+        
+        transformMatrix = glm::ortho(-aspectRatio, aspectRatio, -1.0f, 1.0f) * transformMatrix;
     } else {
         transformMatrix = parent.getParent()->getComponent<tengine::Transform>()->calcTransformMatrix() * transformMatrix;
     }

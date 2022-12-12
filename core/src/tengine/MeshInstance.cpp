@@ -1,7 +1,9 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include <tengine/tengine.hpp>
+#include <tengine/MeshInstance.hpp>
+#include <tengine/ShaderManager.hpp>
+#include <tengine/mglConventions.hpp>
 
 void tengine::MeshInstance::bind()
 {

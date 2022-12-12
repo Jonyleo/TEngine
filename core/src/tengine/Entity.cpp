@@ -3,7 +3,7 @@
 
 #include <glm/glm.hpp>
 
-#include <tengine/json.hpp>
+#include <nlohmann/json.hpp>
 using json = nlohmann::json;
 
 #include <tengine/mglShader.hpp>

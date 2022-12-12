@@ -69,6 +69,7 @@ namespace mgl
         GlMajor = 3, GlMinor = 3;
         Fullscreen = 0, Vsync = 0;
         WindowTitle = "Tangram Project";
+        running = true;
     }
 
     Engine::~Engine(void) {}
@@ -200,7 +201,7 @@ namespace mgl
     void Engine::run()
     {
         double last_time = glfwGetTime();
-        while (!glfwWindowShouldClose(Window))
+        while (!glfwWindowShouldClose(Window) && running)
         {
             double time = glfwGetTime();
             double elapsed_time = time - last_time;
@@ -214,6 +215,10 @@ namespace mgl
         }
         glfwDestroyWindow(Window);
         glfwTerminate();
+    }
+
+    void Engine::close() {
+        running = false;
     }
 
     ////////////////////////////////////////////////////////////////////////////////

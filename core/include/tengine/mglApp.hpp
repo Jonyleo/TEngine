@@ -58,6 +58,7 @@ namespace mgl
                        int vsync);
         void init(std::string sceneName);
         void run();
+        void close();
 
         tengine::Scene& getScene() { return *currentScene; }
 
@@ -74,6 +75,7 @@ namespace mgl
         int Fullscreen;
         int Vsync;
         std::shared_ptr<tengine::Scene> currentScene;
+        bool running;
 
         void setupWindow();
         void setupGLFW();
