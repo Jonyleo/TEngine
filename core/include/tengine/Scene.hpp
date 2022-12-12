@@ -2,6 +2,7 @@
 #define __SCENE_HPP__
 
 #include <memory>
+#include <string>
 
 #include "Entity.hpp"
 
@@ -17,7 +18,7 @@ namespace tengine {
             static std::shared_ptr<Scene> load(std::string &name);
 
             void draw();
-            void update(float timeElapsed); // Todo Delta time
+            void update(double timeElapsed); // Todo Delta time
 
             tengine::Entity& getRoot() { return *root; }
     };

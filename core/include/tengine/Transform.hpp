@@ -26,7 +26,8 @@ namespace tengine
     public:
         Transform(tengine::Entity &parent) : Transform(parent, {0, 0}, 0, 1) {}
         Transform(tengine::Entity &parent, glm::vec2 position, float rotation, float scale) :
-            Component(parent), position(position), rotation(rotation), scale(scale) {}
+            Component(parent), position(position), rotation(rotation), scale(scale),
+            transformMatrix(1.0f) {}
 
         void rotateTo(float angle);
         void rotateBy(float angle);

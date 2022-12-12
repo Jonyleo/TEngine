@@ -21,7 +21,7 @@ namespace tengine
         virtual void postDraw(){};
         virtual void unbind(){};
 
-        virtual void update(float timeElapsed){};
+        virtual void update(double timeElapsed){};
     };
 }
 

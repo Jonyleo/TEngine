@@ -10,6 +10,7 @@
 #define MGL_APP_HPP
 
 #include <memory>
+#include <string>
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -69,7 +70,6 @@ namespace mgl
         Engine();
         App *GlApp;
         int GlMajor, GlMinor;
-        bool windowSizeChanged;
         GLFWwindow *Window;
         const char *WindowTitle;
         int Fullscreen;

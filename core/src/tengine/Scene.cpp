@@ -17,7 +17,7 @@ void tengine::Scene::draw() {
     this->root->draw();
 }
 
-void tengine::Scene::update(float timeElapsed) {
+void tengine::Scene::update(double timeElapsed) {
     this->root->update(timeElapsed);
 }
 

@@ -120,7 +120,7 @@ void tengine::Entity::draw()
     }
 }
 
-void tengine::Entity::update(float timeElapsed) {
+void tengine::Entity::update(double timeElapsed) {
     for (auto &comp : components)
     {
         comp->update(timeElapsed);

@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <vector>
+#include <string>
 
 #include "Component.hpp"
 
@@ -30,7 +31,7 @@ namespace tengine
         void setParent(Entity *parent);
 
         void draw();
-        void update(float timeElapsed);
+        void update(double timeElapsed);
 
         template<typename T>
         std::shared_ptr<T> getComponent() {

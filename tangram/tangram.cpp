@@ -36,14 +36,14 @@ public:
 int directionX = 0;
 int directionY = 0;
 int rotate = 0;
-int scale = 0;
+double scale = 0;
 
 class TangramScript : public tengine::Component
 {
 	float speed = 0;
 
 	public:
-	void update(float elapsedTime) {
+	void update(double elapsedTime) {
 		std::shared_ptr<tengine::Transform> trans = parent.getComponent<tengine::Transform>();
 		
 		trans->rotateBy(glm::radians(360.0f) * elapsedTime * rotate);

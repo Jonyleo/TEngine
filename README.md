@@ -23,7 +23,11 @@ The dependencies' folder structure should be the following
 
 ![Folder structure](FolderStructure.PNG)
 
+
 ### Building
+
+Execute "Build All" (Ctrl+shift+B) by default
+In VS, you can use the Search bar to find this option
 
 Navigate to tangram/tangram.cpp and open the file
 Select Startup Item (tangram.exe)
@@ -31,3 +35,6 @@ Run
 
 The executable will be accessible in TEngine\out\build\x64-Debug\tangram but it must be in the
 same directory as the assets folder and glew32.dll.
+
+"Build All", should copy the assets folder into the same directory as the executable, if
+it does not, please copy it manually.
