@@ -21,7 +21,7 @@ namespace tengine
         Mesh(size_t n_triangles);
         ~Mesh();
 
-        static std::shared_ptr<Mesh> load(std::string& name);
+        static std::shared_ptr<Mesh> load(std::string &name);
 
         void createVertexBuffer(const void *data, size_t size);
         void createIndexBuffer(const void *data, size_t size);

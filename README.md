@@ -1,7 +1,7 @@
 # CGJ Project
 
 ### Group 1
-João Oliveira 93728
+Joï¿½o Oliveira 93728
 Giulio Camasso 105147
 
 ## Instalation
@@ -24,7 +24,7 @@ The dependencies' folder structure should be the following
 ![Folder structure](FolderStructure.PNG)
 
 
-### Building
+### Building & Running
 
 Execute "Build All" (Ctrl+shift+B) by default
 In VS, you can use the Search bar to find this option
@@ -38,3 +38,14 @@ same directory as the assets folder and glew32.dll.
 
 "Build All", should copy the assets folder into the same directory as the executable, if
 it does not, please copy it manually.
+
+### Program
+
+The screen should show the gun model tangram with a blue background.
+You can resize the window.
+
+You can also move, scale and rotate the tangram using the following inputs:
+
+WASD - move tangram
+Scroll Wheel - scale tangram (zoom)
+Q and E - rotate tangram

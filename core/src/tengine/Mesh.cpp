@@ -28,10 +28,10 @@ tengine::Mesh::~Mesh()
     glDeleteBuffers(2, vboId);
 }
 
-
-std::shared_ptr<tengine::Mesh> tengine::Mesh::load(std::string& name) {
+std::shared_ptr<tengine::Mesh> tengine::Mesh::load(std::string &name)
+{
     std::ifstream meshFile("assets/meshes/" + name + ".json");
-	json meshData = json::parse(meshFile);
+    json meshData = json::parse(meshFile);
 
     // Load vertex data
     json vertexData = meshData["vertex"];
@@ -109,5 +109,5 @@ void tengine::Mesh::unbind()
 void tengine::Mesh::draw()
 {
     glDrawElements(GL_TRIANGLES, elements, GL_UNSIGNED_BYTE, (GLvoid *)0);
-    //glDrawArrays(GL_TRIANGLES, 0, elements);
+    // glDrawArrays(GL_TRIANGLES, 0, elements);
 }

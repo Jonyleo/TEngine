@@ -19,7 +19,7 @@ namespace tengine
         std::shared_ptr<tengine::Mesh> mesh;
 
     public:
-        MeshInstance(tengine::Entity& parent,
+        MeshInstance(tengine::Entity &parent,
                      tengine::Color color,
                      std::shared_ptr<mgl::ShaderProgram> shader,
                      std::shared_ptr<tengine::Mesh> mesh)

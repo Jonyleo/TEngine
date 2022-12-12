@@ -61,7 +61,7 @@ namespace mgl
         void run();
         void close();
 
-        tengine::Scene& getScene() { return *currentScene; }
+        tengine::Scene &getScene() { return *currentScene; }
 
     protected:
         virtual ~Engine();

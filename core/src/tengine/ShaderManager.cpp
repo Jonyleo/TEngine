@@ -12,7 +12,7 @@ tengine::ShaderManager &tengine::ShaderManager::getInstance()
 
 void tengine::ShaderManager::setMat4(const std::string &name, const glm::mat4 &value)
 {
-    if(currentShader == nullptr)
+    if (currentShader == nullptr)
         return;
 
     GLuint index = currentShader->Uniforms[name].index;
@@ -21,9 +21,9 @@ void tengine::ShaderManager::setMat4(const std::string &name, const glm::mat4 &v
 
 void tengine::ShaderManager::setVec4(const std::string &name, const glm::vec4 &value)
 {
-    if(currentShader == nullptr)
+    if (currentShader == nullptr)
         return;
-        
+
     GLuint index = currentShader->Uniforms[name].index;
     glUniform4fv(index, 1, glm::value_ptr(value));
 }

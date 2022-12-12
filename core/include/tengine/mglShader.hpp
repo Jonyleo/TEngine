@@ -65,7 +65,7 @@ namespace mgl
         void bind();
         void unbind();
 
-        static std::shared_ptr<ShaderProgram> load(std::string& name);
+        static std::shared_ptr<ShaderProgram> load(std::string &name);
 
     private:
         const std::string read(const std::string &filename);

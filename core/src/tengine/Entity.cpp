@@ -14,19 +14,18 @@ using json = nlohmann::json;
 #include <tengine/Transform.hpp>
 #include <tengine/MeshInstance.hpp>
 
-
-
-std::shared_ptr<tengine::Entity> tengine::Entity::load(std::string &name) {
+std::shared_ptr<tengine::Entity> tengine::Entity::load(std::string &name)
+{
     std::ifstream entFile("assets/entities/" + name + ".json");
     json entData = json::parse(entFile);
-    
-	
+
     std::shared_ptr<tengine::Entity> entity = std::make_shared<tengine::Entity>();
 
-    if(entData.contains("mesh")) {
+    if (entData.contains("mesh"))
+    {
         std::string meshName = entData["mesh"].get<std::string>();
         // Load the mesh
-        std::shared_ptr<tengine::Mesh> mesh = 
+        std::shared_ptr<tengine::Mesh> mesh =
             tengine::ResourceManager::getInstance().load<tengine::Mesh>(meshName);
 
         // Get color
@@ -39,10 +38,10 @@ std::shared_ptr<tengine::Entity> tengine::Entity::load(std::string &name) {
 
         std::string shaderName = entData["shader"].get<std::string>();
 
-        std::shared_ptr<mgl::ShaderProgram> shader = 
+        std::shared_ptr<mgl::ShaderProgram> shader =
             tengine::ResourceManager::getInstance().load<mgl::ShaderProgram>(shaderName);
 
-		entity->attachComponent(std::make_shared<tengine::MeshInstance>(*entity, color, shader, mesh));		
+        entity->attachComponent(std::make_shared<tengine::MeshInstance>(*entity, color, shader, mesh));
     }
 
     // Get position, rotation and scale
@@ -53,14 +52,15 @@ std::shared_ptr<tengine::Entity> tengine::Entity::load(std::string &name) {
 
     entity->attachComponent(std::make_shared<tengine::Transform>(*entity, position, rotation, scale));
 
-    if(entData.contains("children")) {
+    if (entData.contains("children"))
+    {
         json childData = entData["children"];
 
-        for(int i = 0; i < childData.size(); ++i) {
+        for (int i = 0; i < childData.size(); ++i)
+        {
             std::string childName = childData[i].get<std::string>();
             entity->addChild(
-                tengine::ResourceManager::getInstance().load<tengine::Entity>(childName)
-            );
+                tengine::ResourceManager::getInstance().load<tengine::Entity>(childName));
         }
     }
 
@@ -81,13 +81,14 @@ void tengine::Entity::addChild(std::shared_ptr<tengine::Entity> child)
     child->setParent(this);
 }
 
-void tengine::Entity::setParent(tengine::Entity *parent) {
+void tengine::Entity::setParent(tengine::Entity *parent)
+{
     this->parent = parent;
 }
 
 void tengine::Entity::draw()
 {
-    if(!visible)
+    if (!visible)
         return;
 
     for (auto &comp : components)
@@ -115,18 +116,21 @@ void tengine::Entity::draw()
         comp->unbind();
     }
 
-    for(auto& child : children) {
+    for (auto &child : children)
+    {
         child->draw();
     }
 }
 
-void tengine::Entity::update(double timeElapsed) {
+void tengine::Entity::update(double timeElapsed)
+{
     for (auto &comp : components)
     {
         comp->update(timeElapsed);
     }
 
-    for (auto &child: children) {
+    for (auto &child : children)
+    {
         child->update(timeElapsed);
     }
 }

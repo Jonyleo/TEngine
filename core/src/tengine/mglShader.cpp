@@ -144,7 +144,8 @@ namespace mgl
 
     ////////////////////////////////////////////////////////////////////////////////
 
-    std::shared_ptr<ShaderProgram> ShaderProgram::load(std::string& name) {
+    std::shared_ptr<ShaderProgram> ShaderProgram::load(std::string &name)
+    {
         std::shared_ptr<ShaderProgram> shader = std::make_shared<ShaderProgram>();
 
         std::ifstream shaderFile("assets/shaders/" + name + ".json");
@@ -160,14 +161,15 @@ namespace mgl
 
         json uniformData = shaderData["uniforms"];
 
-        for(int i = 0; i < uniformData.size(); ++i) {
+        for (int i = 0; i < uniformData.size(); ++i)
+        {
             std::string uniformName = uniformData[i].get<std::string>();
 
             shader->addUniform(uniformName);
         }
 
-	    shader->create();        
-        
+        shader->create();
+
         return shader;
     }
 } // namespace engine

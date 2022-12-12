@@ -1,5 +1,8 @@
 {
     "fragment": "assets/shaders/plain-color-fs.glsl",
     "vertex": "assets/shaders/plain-color-vs.glsl",
-    "uniforms": ["ModelMatrix", "inColor"]
+    "uniforms": [
+        "ModelMatrix",
+        "inColor"
+    ]
 }

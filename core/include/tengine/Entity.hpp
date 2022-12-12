@@ -19,7 +19,6 @@ namespace tengine
         Entity *parent = nullptr;
 
     public:
-        
         bool visible = true;
 
         Entity() {}
@@ -33,18 +32,20 @@ namespace tengine
         void draw();
         void update(double timeElapsed);
 
-        template<typename T>
-        std::shared_ptr<T> getComponent() {
-            for(auto & comp : components) {
+        template <typename T>
+        std::shared_ptr<T> getComponent()
+        {
+            for (auto &comp : components)
+            {
                 std::shared_ptr<T> ret = std::dynamic_pointer_cast<T>(comp);
 
-                if(ret != nullptr)
+                if (ret != nullptr)
                     return ret;
             }
             return nullptr;
         }
 
-        Entity* getParent() { return parent; }
+        Entity *getParent() { return parent; }
     };
 }
 #endif

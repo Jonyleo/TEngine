@@ -28,9 +28,9 @@ public:
 	void windowCloseCallback(GLFWwindow *win) override;
 	void windowSizeCallback(GLFWwindow *win, int width, int height) override;
 	void keyCallback(GLFWwindow *window, int key, int scancode,
-                                 int action, int mods);
+					 int action, int mods);
 	void scrollCallback(GLFWwindow *window, double xoffset,
-                                    double yoffset);								 							 
+						double yoffset);
 };
 
 int directionX = 0;
@@ -42,16 +42,16 @@ class TangramScript : public tengine::Component
 {
 	float speed = 0;
 
-	public:
-	void update(double elapsedTime) {
+public:
+	void update(double elapsedTime)
+	{
 		std::shared_ptr<tengine::Transform> trans = parent.getComponent<tengine::Transform>();
-		
+
 		trans->rotateBy(glm::radians(360.0f) * elapsedTime * rotate);
-		glm::vec2 move(3 * elapsedTime*directionX, 3*elapsedTime*directionY);
+		glm::vec2 move(3 * elapsedTime * directionX, 3 * elapsedTime * directionY);
 		trans->moveBy(move);
 		trans->scaleBy(1 + 0.3 * scale);
 		scale = 0;
-
 	}
 
 	TangramScript(tengine::Entity &entity) : Component(entity) {}
@@ -61,7 +61,7 @@ class TangramScript : public tengine::Component
 
 void MyApp::initCallback(GLFWwindow *win)
 {
-	tengine::Scene& scene = mgl::Engine::getInstance().getScene();
+	tengine::Scene &scene = mgl::Engine::getInstance().getScene();
 	scene.getRoot().attachComponent(std::make_shared<TangramScript>(scene.getRoot()));
 }
 
@@ -75,61 +75,66 @@ void MyApp::windowSizeCallback(GLFWwindow *win, int winx, int winy)
 }
 
 void MyApp::keyCallback(GLFWwindow *window, int key, int scancode,
-                                 int action, int mods) { 
+						int action, int mods)
+{
 
-	if(action == GLFW_PRESS) {
-		switch(key) {
-			case GLFW_KEY_W:
-				directionY += 1;
-				break;
-			case GLFW_KEY_S:
-				directionY -= 1;
-				break;
-			case GLFW_KEY_A:
-				directionX -= 1;
-				break;
-			case GLFW_KEY_D:
-				directionX += 1;
-				break;
-			
-			case GLFW_KEY_E:
-				rotate -= 1;
-				break;
-			case GLFW_KEY_Q:
-				rotate += 1;
-				break;
+	if (action == GLFW_PRESS)
+	{
+		switch (key)
+		{
+		case GLFW_KEY_W:
+			directionY += 1;
+			break;
+		case GLFW_KEY_S:
+			directionY -= 1;
+			break;
+		case GLFW_KEY_A:
+			directionX -= 1;
+			break;
+		case GLFW_KEY_D:
+			directionX += 1;
+			break;
 
-			case GLFW_KEY_ESCAPE:
-				mgl::Engine::getInstance().close();
-				break;
+		case GLFW_KEY_E:
+			rotate -= 1;
+			break;
+		case GLFW_KEY_Q:
+			rotate += 1;
+			break;
+
+		case GLFW_KEY_ESCAPE:
+			mgl::Engine::getInstance().close();
+			break;
 		}
-	} 
-	if(action == GLFW_RELEASE) {
-		switch(key) {
-			case GLFW_KEY_W:
-				directionY -= 1;
-				break;
-			case GLFW_KEY_S:
-				directionY += 1;
-				break;
-			case GLFW_KEY_A:
-				directionX += 1;
-				break;
-			case GLFW_KEY_D:
-				directionX -= 1;
-				break;
-			
-			case GLFW_KEY_E:
-				rotate += 1;
-				break;
-			case GLFW_KEY_Q:
-				rotate -= 1;
-				break;
+	}
+	if (action == GLFW_RELEASE)
+	{
+		switch (key)
+		{
+		case GLFW_KEY_W:
+			directionY -= 1;
+			break;
+		case GLFW_KEY_S:
+			directionY += 1;
+			break;
+		case GLFW_KEY_A:
+			directionX += 1;
+			break;
+		case GLFW_KEY_D:
+			directionX -= 1;
+			break;
+
+		case GLFW_KEY_E:
+			rotate += 1;
+			break;
+		case GLFW_KEY_Q:
+			rotate -= 1;
+			break;
 		}
 	}
 }
 
-void MyApp::scrollCallback(GLFWwindow *window, double xoffset, double yoffset) 
+void MyApp::scrollCallback(GLFWwindow *window, double xoffset, double yoffset)
 {
 	scale += yoffset;
 }

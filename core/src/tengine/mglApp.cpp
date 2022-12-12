@@ -8,7 +8,6 @@
 #include <tengine/Resources.hpp>
 #include <tengine/Scene.hpp>
 
-
 namespace mgl
 {
 
@@ -211,13 +210,13 @@ namespace mgl
             currentScene->draw();
             glfwSwapBuffers(Window);
             glfwPollEvents();
-
         }
         glfwDestroyWindow(Window);
         glfwTerminate();
     }
 
-    void Engine::close() {
+    void Engine::close()
+    {
         running = false;
     }
 
