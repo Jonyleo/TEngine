@@ -10,10 +10,15 @@ if(MSVC)
 				NAMES glew32
 				HINTS "${CMAKE_SOURCE_DIR}/dependencies/lib"
 	)
+	find_library(assimp REQUIRED
+				NAMES assimp-vc143-mtd
+				HINTS "${CMAKE_SOURCE_DIR}/dependencies/lib"
+	)
 
 elseif(UNIX AND NOT APPLE) 
 	find_package(glfw3 REQUIRED)
 	find_package(GLEW REQUIRED)
+	find_package(assimp REQUIRED)
 endif()
 
 set(TEngine_CORE_INCLUDE
@@ -67,6 +72,7 @@ if(MSVC)
 	target_link_libraries(tengine-core
 		PUBLIC ${glfw3}
 		PUBLIC ${GLEW}
+		PUBLIC ${assimp}
 		PUBLIC opengl32
 	)
 elseif(UNIX AND NOT APPLE) 

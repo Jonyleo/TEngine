@@ -43,6 +43,8 @@ endif()
 if(MSVC) 
 	file(COPY ${CMAKE_SOURCE_DIR}/dependencies/lib/glew32.dll
 		DESTINATION  ${CMAKE_CURRENT_BINARY_DIR})
+	file(COPY ${CMAKE_SOURCE_DIR}/dependencies/lib/assimp-vc143-mtd.dll
+		DESTINATION  ${CMAKE_CURRENT_BINARY_DIR})
 endif()
 
 set(TANGRAM_RESOURCES

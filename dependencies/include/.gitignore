@@ -2,3 +2,5 @@
 !.gitignore
 !nlohmann
 !nlohmann/**
+!assimp
+!assimp/**

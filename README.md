@@ -19,6 +19,10 @@ glew (https://glew.sourceforge.net/)
 glm (https://github.com/g-truc/glm/releases/tag/0.9.9.8)
 - copy the contents of the first glm folder to dependencies/include
 
+assimp:
+	Libraries and dlls were compiled in vs2022, in a 64 bit windows 10 machine
+
+
 The dependencies' folder structure should be the following
 
 ![Folder structure](FolderStructure.PNG)
