@@ -1,6 +1,10 @@
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/transform.hpp>
+#include <glm/gtx/string_cast.hpp>
 
 #include "tengine/mglCamera.hpp"
+
+#include <iostream>
 
 namespace mgl
 {
@@ -8,7 +12,7 @@ namespace mgl
     ///////////////////////////////////////////////////////////////////////// Camera
 
     Camera::Camera(GLuint bindingpoint)
-        : ViewMatrix(glm::mat4(1.0f)), ProjectionMatrix(glm::mat4(1.0f))
+        : ViewMatrix(glm::mat4(1.0f)), ProjectionMatrix(glm::mat4(1.0f)), aspectRatio(1.0f)
     {
         glGenBuffers(1, &UboId);
         glBindBuffer(GL_UNIFORM_BUFFER, UboId);
@@ -43,6 +47,18 @@ namespace mgl
         glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4),
                         glm::value_ptr(ProjectionMatrix));
         glBindBuffer(GL_UNIFORM_BUFFER, 0);
+    }
+
+    void Camera::setAspectRatio(float aspectRatio)
+    {
+        this->aspectRatio = aspectRatio;
+
+        glm::mat4 projectionMatrix = glm::ortho(-aspectRatio, aspectRatio, -1.0f, 1.0f);
+
+        std::cout << aspectRatio << std::endl;
+        std::cout << glm::to_string(projectionMatrix) << std::endl;
+
+        setProjectionMatrix(projectionMatrix);
     }
 
     ////////////////////////////////////////////////////////////////////////////////

@@ -5,16 +5,18 @@
 #include <string>
 
 #include "Entity.hpp"
+#include "mglCamera.hpp"
 
 namespace tengine
 {
     class Scene
     {
     private:
-        std::shared_ptr<tengine::Entity> root;
+        std::shared_ptr<Entity> root;
+        std::shared_ptr<mgl::Camera> camera;
 
     public:
-        Scene(std::shared_ptr<tengine::Entity> root);
+        Scene(std::shared_ptr<Entity> root);
         ~Scene() {}
 
         static std::shared_ptr<Scene> load(std::string &name);
@@ -22,7 +24,8 @@ namespace tengine
         void draw();
         void update(double timeElapsed); // Todo Delta time
 
-        tengine::Entity &getRoot() { return *root; }
+        Entity &getRoot() { return *root; }
+        mgl::Camera &getCamera() { return *camera; }
     };
 }
 

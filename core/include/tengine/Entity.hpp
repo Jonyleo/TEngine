@@ -17,20 +17,26 @@ namespace tengine
         std::vector<pComponent> components;
         std::vector<std::shared_ptr<Entity>> children;
         Entity *parent = nullptr;
+        std::string id;
 
     public:
         bool visible = true;
 
-        Entity() {}
+        Entity(std::string &id) : id(id) {}
 
         static std::shared_ptr<Entity> load(std::string &name);
 
         void attachComponent(pComponent component);
         void addChild(std::shared_ptr<Entity> child);
         void setParent(Entity *parent);
+        Entity &getParent();
+        bool hasParent();
+        std::string getName();
+        std::vector<std::shared_ptr<Entity>> getChildren();
 
         void draw();
         void update(double timeElapsed);
+        void init();
 
         template <typename T>
         std::shared_ptr<T> getComponent()
@@ -44,8 +50,6 @@ namespace tengine
             }
             return nullptr;
         }
-
-        Entity *getParent() { return parent; }
     };
 }
 #endif

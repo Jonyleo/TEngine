@@ -24,15 +24,15 @@ set(TEngine_CORE_INCLUDE
 	"include/tengine/mglConventions.hpp"
 	"include/tengine/mglError.hpp"
 	"include/tengine/mglShader.hpp"
+	"include/tengine/mglMesh.hpp"
 
 	"include/tengine/DataStructs.hpp"
 	"include/tengine/Component.hpp"
 
-	"include/tengine/Mesh.hpp"
 	"include/tengine/Entity.hpp"
 	"include/tengine/Transform.hpp"
 	"include/tengine/MeshInstance.hpp"
-	"include/tengine/ShaderManager.hpp"
+	"include/tengine/Renderer.hpp"
 	"include/tengine/Scene.hpp"
 	"include/tengine/Resources.hpp"
 )
@@ -43,12 +43,12 @@ set(TEngine_CORE_SOURCE
 	"src/tengine/mglCamera.cpp"
 	"src/tengine/mglError.cpp"
 	"src/tengine/mglShader.cpp"
+	"src/tengine/mglMesh.cpp"
 
-	"src/tengine/Mesh.cpp"
 	"src/tengine/Entity.cpp"
 	"src/tengine/Transform.cpp"
 	"src/tengine/MeshInstance.cpp"
-	"src/tengine/ShaderManager.cpp"
+	"src/tengine/Renderer.cpp"
 	"src/tengine/Scene.cpp"
 	
 )
@@ -74,6 +74,7 @@ elseif(UNIX AND NOT APPLE)
 		PUBLIC glfw
 		PUBLIC GLEW
 		PUBLIC GL
+		PUBLIC assimp
 	)
 endif()
 

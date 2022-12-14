@@ -26,6 +26,8 @@ namespace mgl
         glm::mat4 ViewMatrix;
         glm::mat4 ProjectionMatrix;
 
+        float aspectRatio;
+
     public:
         explicit Camera(GLuint bindingpoint);
         ~Camera();
@@ -33,6 +35,7 @@ namespace mgl
         void setViewMatrix(const glm::mat4 &viewmatrix);
         glm::mat4 getProjectionMatrix();
         void setProjectionMatrix(const glm::mat4 &projectionmatrix);
+        void setAspectRatio(float aspectRatio);
     };
 
     ////////////////////////////////////////////////////////////////////////////////

@@ -32,6 +32,8 @@ namespace mgl
 
     const int POSITION_INDEX = 0;
 
+    const int CAMERA_BLOCK_BINDING_POINT = 0;
+
     ////////////////////////////////////////////////////////////////////////////////
 } // namespace mgl
 

@@ -2,30 +2,33 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include <tengine/MeshInstance.hpp>
-#include <tengine/ShaderManager.hpp>
+#include <tengine/Renderer.hpp>
 #include <tengine/mglConventions.hpp>
 
-void tengine::MeshInstance::bind()
+namespace tengine
 {
-    mesh->bind();
-    shader->bind();
+    void MeshInstance::bind()
+    {
+        mesh->bind();
+        shader->bind();
 
-    tengine::ShaderManager::getInstance().setCurrentShader(shader);
-}
+        Renderer::setCurrentShader(shader);
+    }
 
-void tengine::MeshInstance::preDraw()
-{
-    tengine::ShaderManager::getInstance().setVec4(mgl::COLOR_ATTRIBUTE, glm::make_vec4(color.RGBA));
-}
+    void MeshInstance::preDraw()
+    {
+        Renderer::setVec4(mgl::COLOR_ATTRIBUTE, glm::make_vec4(color.RGBA));
+    }
 
-void tengine::MeshInstance::draw()
-{
-    mesh->draw();
-}
+    void MeshInstance::draw()
+    {
+        mesh->draw();
+    }
 
-void tengine::MeshInstance::unbind()
-{
-    tengine::ShaderManager::getInstance().setCurrentShader(nullptr);
-    mesh->unbind();
-    shader->unbind();
+    void MeshInstance::unbind()
+    {
+        Renderer::setCurrentShader(nullptr);
+        mesh->unbind();
+        shader->unbind();
+    }
 }

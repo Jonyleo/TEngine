@@ -7,6 +7,7 @@ using json = nlohmann::json;
 
 #include <tengine/mglConventions.hpp>
 #include <tengine/mglShader.hpp>
+#include <tengine/mglMesh.hpp>
 
 namespace mgl
 {
@@ -148,25 +149,25 @@ namespace mgl
     {
         std::shared_ptr<ShaderProgram> shader = std::make_shared<ShaderProgram>();
 
-        std::ifstream shaderFile("assets/shaders/" + name + ".json");
+        std::string shaderDir = "assets/shaders/";
+
+        std::ifstream shaderFile(shaderDir + name + ".json");
         json shaderData = json::parse(shaderFile);
 
-        std::string fsName = shaderData["fragment"].get<std::string>();
-        std::string vsName = shaderData["vertex"].get<std::string>();
+        std::string fsName = shaderDir + shaderData["fragment"].get<std::string>();
+        std::string vsName = shaderDir + shaderData["vertex"].get<std::string>();
 
         shader->addShader(GL_FRAGMENT_SHADER, fsName);
         shader->addShader(GL_VERTEX_SHADER, vsName);
 
-        shader->addAttribute(mgl::POSITION_ATTRIBUTE, mgl::POSITION_INDEX);
+        shader->addAttribute(mgl::POSITION_ATTRIBUTE, mgl::Mesh::POSITION);
+        shader->addAttribute(mgl::NORMAL_ATTRIBUTE, mgl::Mesh::NORMAL);
+        shader->addAttribute(mgl::TEXCOORD_ATTRIBUTE, mgl::Mesh::TEXCOORD);
+        shader->addAttribute(mgl::TANGENT_ATTRIBUTE, mgl::Mesh::TANGENT);
 
-        json uniformData = shaderData["uniforms"];
-
-        for (int i = 0; i < uniformData.size(); ++i)
-        {
-            std::string uniformName = uniformData[i].get<std::string>();
-
-            shader->addUniform(uniformName);
-        }
+        shader->addUniform(mgl::COLOR_ATTRIBUTE);
+        shader->addUniform(mgl::MODEL_MATRIX);
+        shader->addUniformBlock(mgl::CAMERA_BLOCK, mgl::CAMERA_BLOCK_BINDING_POINT);
 
         shader->create();
 

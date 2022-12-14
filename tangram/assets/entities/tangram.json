@@ -1,17 +1,33 @@
 {
     "position": [
         0,
+        0,
         0
     ],
-    "rotation": 0,
-    "scale": 1,
+    "rotation": [
+        0,
+        0,
+        0
+    ],
+    "scale": [
+        1,
+        1,
+        1
+    ],
     "children": [
         "greenSquare",
+        "greenSquareBox",
         "yellowTrapezoid",
+        "yellowTrapezoidBox",
         "pinkTriangle",
+        "pinkTriangleBox",
         "redTriangle",
+        "redTriangleBox",
         "blueTriangle",
+        "blueTriangleBox",
         "orangeTriangle",
-        "purpleTriangle"
+        "orangeTriangleBox",
+        "purpleTriangle",
+        "purpleTriangleBox"
     ]
 }

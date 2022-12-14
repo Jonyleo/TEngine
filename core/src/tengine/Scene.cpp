@@ -8,31 +8,36 @@ using json = nlohmann::json;
 #include <tengine/Resources.hpp>
 #include <tengine/Entity.hpp>
 #include <tengine/Transform.hpp>
+#include <tengine/mglConventions.hpp>
 
-tengine::Scene::Scene(std::shared_ptr<tengine::Entity> root) : root(root)
+namespace tengine
 {
-    root->getComponent<tengine::Transform>()->setRoot(true);
-}
+    Scene::Scene(std::shared_ptr<Entity> root) : root(root)
+    {
+        camera = std::make_shared<mgl::Camera>(mgl::CAMERA_BLOCK_BINDING_POINT);
+        camera->setViewMatrix(glm::mat4(1.0f));
+    }
 
-void tengine::Scene::draw()
-{
-    this->root->draw();
-}
+    void Scene::draw()
+    {
+        this->root->draw();
+    }
 
-void tengine::Scene::update(double timeElapsed)
-{
-    this->root->update(timeElapsed);
-}
+    void Scene::update(double timeElapsed)
+    {
+        this->root->update(timeElapsed);
+    }
 
-std::shared_ptr<tengine::Scene> tengine::Scene::load(std::string &name)
-{
-    std::ifstream sceneFile("assets/scenes/" + name + ".json");
-    json sceneData = json::parse(sceneFile);
+    std::shared_ptr<Scene> Scene::load(std::string &name)
+    {
+        std::ifstream sceneFile("assets/scenes/" + name + ".json");
+        json sceneData = json::parse(sceneFile);
 
-    std::string rootName = sceneData["root"];
+        std::string rootName = sceneData["root"];
 
-    std::shared_ptr<tengine::Entity> root =
-        tengine::ResourceManager::getInstance().load<tengine::Entity>(rootName);
+        std::shared_ptr<Entity> root =
+            ResourceManager::getInstance().load<Entity>(rootName);
 
-    return std::make_shared<tengine::Scene>(root);
+        return std::make_shared<Scene>(root);
+    }
 }
