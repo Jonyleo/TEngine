@@ -1,3 +1,4 @@
 *
 !.gitignore
-!assimp.dll
+!assimp-vc143-mtd.lib
+!assimp-vc143-mtd.dll
