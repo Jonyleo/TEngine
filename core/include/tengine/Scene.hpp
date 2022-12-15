@@ -22,7 +22,7 @@ namespace tengine
         static std::shared_ptr<Scene> load(std::string &name);
 
         void draw();
-        void update(double timeElapsed); // Todo Delta time
+        void update(double timeElapsed); // TODO: Delta time
 
         Entity &getRoot() { return *root; }
         mgl::Camera &getCamera() { return *camera; }

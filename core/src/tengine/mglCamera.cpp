@@ -6,6 +6,7 @@
 #include "tengine/mglApp.hpp"
 
 #include <iostream>
+#include <algorithm>
 
 namespace mgl
 {

@@ -53,16 +53,24 @@ namespace mgl
             bool perspective = true;
 
         public:
-            Camera(std::shared_ptr<CameraBuffer> cameraBuff, float radius,
-                    float fov, float zNear, float zFar)
-                : cameraBuff(cameraBuff), radius(radius),
-                fov(fov), zNear(zNear), zFar(zFar), 
-                rotY(0.0f), rotRight(0.0f) {}
+            Camera(std::shared_ptr<CameraBuffer> cameraBuff, float radius, float fov, float zNear, float zFar) :
+                cameraBuff(cameraBuff),
+                radius(radius),
+                fov(fov),
+                zNear(zNear),
+                zFar(zFar), 
+                rotY(0.0f),
+                rotRight(0.0f)
+            {}
 
             void zoomBy(float zoomDistance);
             void rotate(float deltaRotY, float deltaRotRight);
 
-            void switchPerspective() { perspective = !perspective; reComputeProjection(); }
+            void switchPerspective() {
+                perspective = !perspective;
+                reComputeProjection();
+            }
+
             void reComputeProjection();
             void reComputeView();
 

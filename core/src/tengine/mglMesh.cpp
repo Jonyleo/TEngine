@@ -14,36 +14,29 @@ namespace mgl
     AssimpFlags = aiProcess_Triangulate;
   }
 
-  Mesh::~Mesh() { destroyBufferObjects(); }
-
-  void Mesh::setAssimpFlags(unsigned int flags) { AssimpFlags = flags; }
-
-  void Mesh::joinIdenticalVertices()
-  {
-    AssimpFlags |= aiProcess_JoinIdenticalVertices;
+  Mesh::~Mesh(){
+      destroyBufferObjects();
   }
 
-  void Mesh::generateNormals() { AssimpFlags |= aiProcess_GenNormals; }
+  void Mesh::setAssimpFlags(unsigned int flags)                     { AssimpFlags = flags; }
 
-  void Mesh::generateSmoothNormals()
-  {
-    AssimpFlags |= aiProcess_GenSmoothNormals;
+  void Mesh::joinIdenticalVertices()                                { AssimpFlags |= aiProcess_JoinIdenticalVertices; }
+
+  void Mesh::generateNormals()                                      { AssimpFlags |= aiProcess_GenNormals; }
+
+  void Mesh::generateSmoothNormals()                                { AssimpFlags |= aiProcess_GenSmoothNormals;
   }
+  void Mesh::generateTexcoords()                                    { AssimpFlags |= aiProcess_GenUVCoords; }
 
-  void Mesh::generateTexcoords() { AssimpFlags |= aiProcess_GenUVCoords; }
+  void Mesh::calculateTangentSpace()                                { AssimpFlags |= aiProcess_CalcTangentSpace; }
 
-  void Mesh::calculateTangentSpace()
-  {
-    AssimpFlags |= aiProcess_CalcTangentSpace;
-  }
+  void Mesh::flipUVs()                                              { AssimpFlags |= aiProcess_FlipUVs; }
 
-  void Mesh::flipUVs() { AssimpFlags |= aiProcess_FlipUVs; }
+  bool Mesh::hasNormals()                                           { return NormalsLoaded; }
 
-  bool Mesh::hasNormals() { return NormalsLoaded; }
+  bool Mesh::hasTexcoords()                                         { return TexcoordsLoaded; }
 
-  bool Mesh::hasTexcoords() { return TexcoordsLoaded; }
-
-  bool Mesh::hasTangentsAndBitangents() { return TangentsAndBitangentsLoaded; }
+  bool Mesh::hasTangentsAndBitangents()                             { return TangentsAndBitangentsLoaded; }
 
   ////////////////////////////////////////////////////////////////////////////////
 
@@ -58,21 +51,22 @@ namespace mgl
     {
       const aiVector3D &aiPosition = mesh->mVertices[i];
       Positions.push_back(glm::vec3(aiPosition.x, aiPosition.y, aiPosition.z));
-      if (NormalsLoaded)
-      {
+      
+      if (NormalsLoaded) {
         const aiVector3D &aiNormal = mesh->mNormals[i];
         Normals.push_back(glm::vec3(aiNormal.x, aiNormal.y, aiNormal.z));
       }
-      if (TexcoordsLoaded)
-      {
+
+      if (TexcoordsLoaded) {
         const aiVector3D &aiTexcoord = mesh->mTextureCoords[0][i];
         Texcoords.push_back(glm::vec2(aiTexcoord.x, aiTexcoord.y));
       }
-      if (TangentsAndBitangentsLoaded)
-      {
+
+      if (TangentsAndBitangentsLoaded) {
         const aiVector3D &aiTangent = mesh->mTangents[i];
         Tangents.push_back(glm::vec3(aiTangent.x, aiTangent.y, aiTangent.z));
       }
+
     }
     for (unsigned int i = 0; i < mesh->mNumFaces; i++)
     {
@@ -98,15 +92,14 @@ namespace mgl
       n_vertices += scene->mMeshes[i]->mNumVertices;
       n_indices += Meshes[i].nIndices;
     }
+
     Positions.reserve(n_vertices);
     Normals.reserve(n_vertices);
     Texcoords.reserve(n_vertices);
     Indices.reserve(n_indices);
 
     for (unsigned int i = 0; i < Meshes.size(); i++)
-    {
       processMesh(scene->mMeshes[i]);
-    }
 
 #ifdef DEBUG
     std::cout << "Loaded " << Meshes.size() << " mesh(es) [" << n_vertices
@@ -119,11 +112,9 @@ namespace mgl
   {
     Assimp::Importer importer;
     const aiScene *scene = importer.ReadFile(filename, AssimpFlags);
-    if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE ||
-        !scene->mRootNode)
+    if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
     {
-      std::cout << "Error while loading:" << importer.GetErrorString()
-                << std::endl;
+      std::cout << "Error while loading:" << importer.GetErrorString() << std::endl;
       exit(EXIT_FAILURE);
     }
 
@@ -153,8 +144,7 @@ namespace mgl
       if (NormalsLoaded)
       {
         glBindBuffer(GL_ARRAY_BUFFER, boId[NORMAL]);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(Normals[0]) * Normals.size(),
-                     &Normals[0], GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(Normals[0]) * Normals.size(), &Normals[0], GL_STATIC_DRAW);
         glEnableVertexAttribArray(NORMAL);
         glVertexAttribPointer(NORMAL, 3, GL_FLOAT, GL_FALSE, 0, 0);
       }
@@ -162,8 +152,7 @@ namespace mgl
       if (TexcoordsLoaded)
       {
         glBindBuffer(GL_ARRAY_BUFFER, boId[TEXCOORD]);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(Texcoords[0]) * Texcoords.size(),
-                     &Texcoords[0], GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(Texcoords[0]) * Texcoords.size(), &Texcoords[0], GL_STATIC_DRAW);
         glEnableVertexAttribArray(TEXCOORD);
         glVertexAttribPointer(TEXCOORD, 2, GL_FLOAT, GL_FALSE, 0, 0);
       }
@@ -171,19 +160,19 @@ namespace mgl
       if (TangentsAndBitangentsLoaded)
       {
         glBindBuffer(GL_ARRAY_BUFFER, boId[TANGENT]);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(Tangents[0]) * Tangents.size(),
-                     &Tangents[0], GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(Tangents[0]) * Tangents.size(), &Tangents[0], GL_STATIC_DRAW);
         glEnableVertexAttribArray(TANGENT);
         glVertexAttribPointer(TANGENT, 3, GL_FLOAT, GL_FALSE, 0, 0);
       }
 
       glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, boId[INDEX]);
-      glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Indices[0]) * Indices.size(),
-                   &Indices[0], GL_STATIC_DRAW);
+      glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Indices[0]) * Indices.size(), &Indices[0], GL_STATIC_DRAW);
     }
     glBindVertexArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glDeleteBuffers(5, boId);
+
+    // TODO: check this tomorrow...
+    // glDeleteBuffers(5, boId);
   }
 
   void Mesh::destroyBufferObjects()
@@ -207,15 +196,9 @@ namespace mgl
     }
   }
 
-  void Mesh::bind()
-  {
-    glBindVertexArray(VaoId);
-  }
+  void Mesh::bind()         { glBindVertexArray(VaoId); }
 
-  void Mesh::unbind()
-  {
-    glBindVertexArray(0);
-  }
+  void Mesh::unbind()       { glBindVertexArray(0); }
 
   std::shared_ptr<Mesh> Mesh::load(std::string &name)
   {

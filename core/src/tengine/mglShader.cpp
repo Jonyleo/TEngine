@@ -18,15 +18,14 @@ namespace mgl
     {
         std::string line, shader_string;
         std::ifstream ifile(filename);
+
         while (std::getline(ifile, line))
-        {
             shader_string += line + "\n";
-        }
+
         return shader_string;
     }
 
-    const GLuint ShaderProgram::checkCompilation(const GLuint shader_id,
-                                                 const std::string &filename)
+    const GLuint ShaderProgram::checkCompilation(const GLuint shader_id, const std::string &filename)
     {
         GLint compiled;
         glGetShaderiv(shader_id, GL_COMPILE_STATUS, &compiled);
@@ -36,8 +35,7 @@ namespace mgl
             glGetShaderiv(shader_id, GL_INFO_LOG_LENGTH, &length);
             GLchar *const log = new char[length];
             glGetShaderInfoLog(shader_id, length, &length, log);
-            std::cerr << "[" << filename << "] " << std::endl
-                      << log;
+            std::cerr << "[" << filename << "] " << std::endl << log;
             delete[] log;
         }
         return compiled;
@@ -53,8 +51,7 @@ namespace mgl
             glGetProgramiv(ProgramId, GL_INFO_LOG_LENGTH, &length);
             GLchar *const log = new char[length];
             glGetProgramInfoLog(ProgramId, length, &length, log);
-            std::cerr << "[LINK] " << std::endl
-                      << log << std::endl;
+            std::cerr << "[LINK] " << std::endl << log << std::endl;
             delete[] log;
             assert(0);
         }
@@ -68,8 +65,7 @@ namespace mgl
         glDeleteProgram(ProgramId);
     }
 
-    void ShaderProgram::addShader(const GLenum shader_type,
-                                  const std::string &filename)
+    void ShaderProgram::addShader(const GLenum shader_type, const std::string &filename)
     {
         const GLuint shader_id = glCreateShader(shader_type);
         const std::string scode = read(filename);

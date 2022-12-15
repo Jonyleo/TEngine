@@ -134,9 +134,11 @@ namespace mgl
         }
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, GlMajor);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, GlMinor);
+
 #ifdef DEBUG
         glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
 #endif
+
         setupWindow();
         setupCallbacks();
     }
@@ -189,6 +191,7 @@ namespace mgl
         currentScene = tengine::ResourceManager::getInstance().load<tengine::Scene>(sceneName);
 
         GlApp->initCallback(Window);
+
 #ifdef DEBUG
         displayInfo();
         setupDebugOutput();

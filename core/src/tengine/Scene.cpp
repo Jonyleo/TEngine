@@ -1,6 +1,5 @@
 #include <fstream>
 #include <memory>
-
 #include <nlohmann/json.hpp>
 using json = nlohmann::json;
 
@@ -31,8 +30,7 @@ namespace tengine
 
         std::string rootName = sceneData["root"];
 
-        std::shared_ptr<Entity> root =
-            ResourceManager::getInstance().load<Entity>(rootName);
+        std::shared_ptr<Entity> root = ResourceManager::getInstance().load<Entity>(rootName);
 
         return std::make_shared<Scene>(root);
     }

@@ -29,6 +29,7 @@ class MyApp : public mgl::App
 friend class TangramScript;
 
 private:
+
 	std::shared_ptr<mgl::CameraBuffer> cameraBuff;
 	std::vector<std::shared_ptr<mgl::Camera>> cameras;
 	int nCamera = 0;
@@ -36,27 +37,25 @@ private:
 	int transition = 0;
 
 	bool rotate = false;
+
 	double mouseX = 0;
 	double mouseY = 0;
 	double lastX = 0;
 	double lastY = 0;
+
 	double zoom = 0;
+
 	bool switchCamera = false;
 	bool switchPerspective = false;
-
-	
 
 public:
 	void initCallback(GLFWwindow *win) override;
 	void windowCloseCallback(GLFWwindow *win) override;
 	void windowSizeCallback(GLFWwindow *win, int width, int height) override;
-	void keyCallback(GLFWwindow *window, int key, int scancode,
-					 int action, int mods);
-	void scrollCallback(GLFWwindow *window, double xoffset,
-						double yoffset);
+	void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods);
+	void scrollCallback(GLFWwindow *window, double xoffset, double yoffset);
 	void cursorCallback(GLFWwindow *window, double xpos, double ypos);
-	void mouseButtonCallback(GLFWwindow *window, int button, int action,
-                                         int mods);
+	void mouseButtonCallback(GLFWwindow *window, int button, int action, int mods);
 };
 
 class TangramScript : public tengine::Component
@@ -69,15 +68,14 @@ class TangramScript : public tengine::Component
 	};
 
 private:
-	MyApp& app;
 
+	MyApp& app;
 	float transitionTime = 0.5; // transition takes 5 seconds
 	float timePassed = 0;
 	std::map<std::string, std::shared_ptr<tengine::Transform>> pieceTransforms;
 	std::map<std::string, std::shared_ptr<tengine::Transform>> boxTransforms;
 	std::map<std::string, Transition> transitionMap;
 	std::map<std::string, Transition> initialMap;
-
 	float sensitivity = 1;
 
 public:
@@ -105,7 +103,7 @@ public:
 	void update(double elapsedTime)
 	{
 		if(app.switchCamera) {
-			app.nCamera = (app.nCamera + 1) % app.cameras.size();
+			app.nCamera = (static_cast<unsigned long long>(app.nCamera) + 1) % app.cameras.size();
 			mgl::Engine::getInstance().getScene().setCamera(app.cameras[app.nCamera]);
 			app.switchCamera = false;
 		}
@@ -169,24 +167,44 @@ public:
 void MyApp::initCallback(GLFWwindow *win)
 {
 	cameraBuff = std::make_shared<mgl::CameraBuffer>(mgl::CAMERA_BLOCK_BINDING_POINT);
-	cameras.push_back(std::make_shared<mgl::Camera>(cameraBuff, 
-				5.0f, glm::radians(mgl::FOV), mgl::zNear, mgl::zFar));
-	cameras.push_back(std::make_shared<mgl::Camera>(cameraBuff, 
-				5.0f, glm::radians(mgl::FOV), mgl::zNear, mgl::zFar));
+	
+	// camera 0: box configuration
+	cameras.push_back(
+		std::make_shared<mgl::Camera>(
+			cameraBuff, 
+			5.0f,
+			glm::radians(mgl::FOV),
+			mgl::zNear,
+			mgl::zFar
+		)
+	);
+
+	// camera 1: tangram figure composed
+	cameras.push_back(
+		std::make_shared<mgl::Camera>(
+			cameraBuff, 
+			5.0f,
+			glm::radians(mgl::FOV),
+			mgl::zNear,
+			mgl::zFar
+		)
+	);
+
+	
+	tengine::Scene &scene = mgl::Engine::getInstance().getScene();
 
 	nCamera = 0;
-
-	tengine::Scene &scene = mgl::Engine::getInstance().getScene();
 	scene.setCamera(cameras[nCamera]);
-
 
 	scene.getRoot().attachComponent(std::make_shared<TangramScript>(scene.getRoot()));
 
 	scene.getRoot().init();
-
 }
 
-void MyApp::windowCloseCallback(GLFWwindow *win) { tengine::ResourceManager::getInstance().clear(); }
+void MyApp::windowCloseCallback(GLFWwindow *win)
+{
+	tengine::ResourceManager::getInstance().clear();
+}
 
 void MyApp::windowSizeCallback(GLFWwindow *win, int winx, int winy)
 {
@@ -196,36 +214,34 @@ void MyApp::windowSizeCallback(GLFWwindow *win, int winx, int winy)
 	mgl::Engine::getInstance().getScene().getCamera().reComputeProjection();
 }
 
-void MyApp::keyCallback(GLFWwindow *window, int key, int scancode,
-						int action, int mods)
+void MyApp::keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods)
 {
 
 	if (action == GLFW_PRESS)
 	{
-		switch (key)
-		{
-		case GLFW_KEY_ESCAPE:
-			mgl::Engine::getInstance().close();
-			break;
+		switch (key) {
+			case GLFW_KEY_ESCAPE:
+				mgl::Engine::getInstance().close();
+				break;
 
-		case GLFW_KEY_LEFT:
-			transition += 1;
-			break;
+			case GLFW_KEY_LEFT:
+				transition += 1;
+				break;
 
-		case GLFW_KEY_RIGHT:
-			transition -= 1;
-			break;
+			case GLFW_KEY_RIGHT:
+				transition -= 1;
+				break;
 
-		case GLFW_KEY_P:
-			switchPerspective = true;
-			break;
+			case GLFW_KEY_P:
+				switchPerspective = true;
+				break;
 
-		case GLFW_KEY_C:
-			switchCamera = true;
-			break;
-			
+			case GLFW_KEY_C:
+				switchCamera = true;
+				break;
 		}
 	}
+
 	if(action == GLFW_RELEASE) {
 		switch (key)
 		{
