@@ -188,9 +188,6 @@ namespace mgl
 
         currentScene = tengine::ResourceManager::getInstance().load<tengine::Scene>(sceneName);
 
-        currentScene->getCamera().setViewMatrix(glm::mat4(1.0f));
-        currentScene->getCamera().setAspectRatio(WindowWidth / (float)WindowHeight);
-
         GlApp->initCallback(Window);
 #ifdef DEBUG
         displayInfo();
@@ -221,6 +218,10 @@ namespace mgl
     void Engine::close()
     {
         running = false;
+    }
+
+    void Engine::swapFullscren() {
+
     }
 
     ////////////////////////////////////////////////////////////////////////////////

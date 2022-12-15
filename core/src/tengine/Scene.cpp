@@ -12,11 +12,7 @@ using json = nlohmann::json;
 
 namespace tengine
 {
-    Scene::Scene(std::shared_ptr<Entity> root) : root(root)
-    {
-        camera = std::make_shared<mgl::Camera>(mgl::CAMERA_BLOCK_BINDING_POINT);
-        camera->setViewMatrix(glm::mat4(1.0f));
-    }
+    Scene::Scene(std::shared_ptr<Entity> root) : root(root){}
 
     void Scene::draw()
     {

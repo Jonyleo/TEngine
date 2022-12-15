@@ -34,6 +34,10 @@ namespace mgl
 
     const int CAMERA_BLOCK_BINDING_POINT = 0;
 
+    const float FOV = 30.0f;
+    const float zNear = 1.0f;
+    const float zFar = 10.0f;
+
     ////////////////////////////////////////////////////////////////////////////////
 } // namespace mgl
 

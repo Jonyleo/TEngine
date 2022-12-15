@@ -10,9 +10,12 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
+#include <iostream>
+
 #include <GL/glew.h>
 
 #include <tengine/mglApp.hpp>
+#include <tengine/mglConventions.hpp>
 #include <tengine/Resources.hpp>
 #include <tengine/Entity.hpp>
 #include <tengine/Transform.hpp>
@@ -20,8 +23,28 @@
 
 ////////////////////////////////////////////////////////////////////////// MYAPP
 
+
 class MyApp : public mgl::App
 {
+friend class TangramScript;
+
+private:
+	std::shared_ptr<mgl::CameraBuffer> cameraBuff;
+	std::vector<std::shared_ptr<mgl::Camera>> cameras;
+	int nCamera = 0;
+
+	int transition = 0;
+
+	bool rotate = false;
+	double mouseX = 0;
+	double mouseY = 0;
+	double lastX = 0;
+	double lastY = 0;
+	double zoom = 0;
+	bool switchCamera = false;
+	bool switchPerspective = false;
+
+	
 
 public:
 	void initCallback(GLFWwindow *win) override;
@@ -31,49 +54,31 @@ public:
 					 int action, int mods);
 	void scrollCallback(GLFWwindow *window, double xoffset,
 						double yoffset);
+	void cursorCallback(GLFWwindow *window, double xpos, double ypos);
+	void mouseButtonCallback(GLFWwindow *window, int button, int action,
+                                         int mods);
 };
-
-// Eye(5,5,5) Center(0,0,0) Up(0,1,0)
-const glm::mat4 ViewMatrix1 =
-	glm::lookAt(glm::vec3(0, 0, 5.0f), glm::vec3(0.0f, 0.0f, 0.0f),
-				glm::vec3(0.0f, 1.0f, 0.0f));
-
-// Eye(-5,-5,-5) Center(0,0,0) Up(0,1,0)
-const glm::mat4 ViewMatrix2 =
-	glm::lookAt(glm::vec3(-5.0f, -5.0f, -5.0f), glm::vec3(0.0f, 0.0f, 0.0f),
-				glm::vec3(0.0f, 1.0f, 0.0f));
-
-// Orthographic LeftRight(-2,2) BottomTop(-2,2) NearFar(1,10)
-const glm::mat4 ProjectionMatrix1 =
-	glm::ortho(-2.0f, 2.0f, -2.0f, 2.0f, 1.0f, 10.0f);
-
-// Perspective Fovy(30) Aspect(640/480) NearZ(1) FarZ(10)
-const glm::mat4 ProjectionMatrix2 =
-	glm::perspective(glm::radians(30.0f), 640.0f / 480.0f, 1.0f, 10.0f);
-
-int transition = 0;
-
-int directionX = 0;
-int directionY = 0;
-int rotateZ = 0;
-int rotateY = 0;
-double scale = 0;
 
 class TangramScript : public tengine::Component
 {
+
 	struct Transition
 	{
 		glm::vec3 position;
 		glm::quat rotation;
 	};
 
-	float speed = 0;
+private:
+	MyApp& app;
+
 	float transitionTime = 0.5; // transition takes 5 seconds
 	float timePassed = 0;
 	std::map<std::string, std::shared_ptr<tengine::Transform>> pieceTransforms;
 	std::map<std::string, std::shared_ptr<tengine::Transform>> boxTransforms;
 	std::map<std::string, Transition> transitionMap;
 	std::map<std::string, Transition> initialMap;
+
+	float sensitivity = 1;
 
 public:
 	void init()
@@ -99,22 +104,38 @@ public:
 
 	void update(double elapsedTime)
 	{
-		std::shared_ptr<tengine::Transform> trans = entity.getComponent<tengine::Transform>();
+		if(app.switchCamera) {
+			app.nCamera = (app.nCamera + 1) % app.cameras.size();
+			mgl::Engine::getInstance().getScene().setCamera(app.cameras[app.nCamera]);
+			app.switchCamera = false;
+		}
 
-		glm::vec3 rotation = {0.0f, 360.0f * elapsedTime * rotateY, 360.0f * elapsedTime * rotateZ};
-		trans->rotateBy(tengine::Transform::quaternionFromAxis(rotation));
-		;
-		trans->moveBy(glm::vec3(3 * elapsedTime * directionX, 3 * elapsedTime * directionY, 0));
+		if(app.zoom != 0) {
+			mgl::Engine::getInstance().getScene().getCamera().zoomBy(app.zoom);
+			app.zoom = 0;
+		}
 
-		double scaleL = 1 + 0.3 * scale;
-		trans->scaleBy({scaleL, scaleL, scaleL});
+		if(app.rotate) {
+			float movementX = -(app.mouseX - app.lastX) * sensitivity; 
+			float movementY = (app.mouseY - app.lastY) * sensitivity;
 
-		scale = 0;
+			mgl::Engine::getInstance().getScene().getCamera().rotate(
+				movementX, movementY
+			);
 
-		if (transition == 0)
+			app.lastX = app.mouseX;
+			app.lastY = app.mouseY;
+		}
+
+		if(app.switchPerspective) {
+			mgl::Engine::getInstance().getScene().getCamera().switchPerspective();
+			app.switchPerspective = false;
+		}
+
+		if (app.transition == 0)
 			return;
 
-		timePassed += elapsedTime * transition;
+		timePassed += elapsedTime * app.transition;
 		if (timePassed > transitionTime)
 			timePassed = transitionTime;
 		if (timePassed < 0)
@@ -140,18 +161,29 @@ public:
 		}
 	}
 
-	TangramScript(tengine::Entity &entity) : Component(entity) {}
+	TangramScript(tengine::Entity &entity) : Component(entity), app(*(MyApp *)mgl::Engine::getInstance().getApp()) {}
 };
 
 ////////////////////////////////////////////////////////////////////// CALLBACKS
 
 void MyApp::initCallback(GLFWwindow *win)
 {
+	cameraBuff = std::make_shared<mgl::CameraBuffer>(mgl::CAMERA_BLOCK_BINDING_POINT);
+	cameras.push_back(std::make_shared<mgl::Camera>(cameraBuff, 
+				5.0f, glm::radians(mgl::FOV), mgl::zNear, mgl::zFar));
+	cameras.push_back(std::make_shared<mgl::Camera>(cameraBuff, 
+				5.0f, glm::radians(mgl::FOV), mgl::zNear, mgl::zFar));
+
+	nCamera = 0;
+
 	tengine::Scene &scene = mgl::Engine::getInstance().getScene();
+	scene.setCamera(cameras[nCamera]);
+
+
 	scene.getRoot().attachComponent(std::make_shared<TangramScript>(scene.getRoot()));
-	scene.getCamera().setViewMatrix(ViewMatrix1);
-	scene.getCamera().setProjectionMatrix(ProjectionMatrix2);
+
 	scene.getRoot().init();
+
 }
 
 void MyApp::windowCloseCallback(GLFWwindow *win) { tengine::ResourceManager::getInstance().clear(); }
@@ -161,7 +193,7 @@ void MyApp::windowSizeCallback(GLFWwindow *win, int winx, int winy)
 	glViewport(0, 0, winx, winy);
 	mgl::Engine::getInstance().WindowHeight = winy;
 	mgl::Engine::getInstance().WindowWidth = winx;
-	mgl::Engine::getInstance().getScene().getCamera().setAspectRatio(winx / (float)winy);
+	mgl::Engine::getInstance().getScene().getCamera().reComputeProjection();
 }
 
 void MyApp::keyCallback(GLFWwindow *window, int key, int scancode,
@@ -172,33 +204,6 @@ void MyApp::keyCallback(GLFWwindow *window, int key, int scancode,
 	{
 		switch (key)
 		{
-		case GLFW_KEY_W:
-			directionY += 1;
-			break;
-		case GLFW_KEY_S:
-			directionY -= 1;
-			break;
-		case GLFW_KEY_A:
-			directionX -= 1;
-			break;
-		case GLFW_KEY_D:
-			directionX += 1;
-			break;
-
-		case GLFW_KEY_E:
-			rotateZ -= 1;
-			break;
-		case GLFW_KEY_Q:
-			rotateZ += 1;
-			break;
-
-		case GLFW_KEY_Z:
-			rotateY -= 1;
-			break;
-		case GLFW_KEY_C:
-			rotateY += 1;
-			break;
-
 		case GLFW_KEY_ESCAPE:
 			mgl::Engine::getInstance().close();
 			break;
@@ -210,39 +215,20 @@ void MyApp::keyCallback(GLFWwindow *window, int key, int scancode,
 		case GLFW_KEY_RIGHT:
 			transition -= 1;
 			break;
+
+		case GLFW_KEY_P:
+			switchPerspective = true;
+			break;
+
+		case GLFW_KEY_C:
+			switchCamera = true;
+			break;
+			
 		}
 	}
-	if (action == GLFW_RELEASE)
-	{
+	if(action == GLFW_RELEASE) {
 		switch (key)
 		{
-		case GLFW_KEY_W:
-			directionY -= 1;
-			break;
-		case GLFW_KEY_S:
-			directionY += 1;
-			break;
-		case GLFW_KEY_A:
-			directionX += 1;
-			break;
-		case GLFW_KEY_D:
-			directionX -= 1;
-			break;
-
-		case GLFW_KEY_E:
-			rotateZ += 1;
-			break;
-		case GLFW_KEY_Q:
-			rotateZ -= 1;
-			break;
-
-		case GLFW_KEY_Z:
-			rotateY += 1;
-			break;
-		case GLFW_KEY_C:
-			rotateY -= 1;
-			break;
-
 		case GLFW_KEY_LEFT:
 			transition -= 1;
 			break;
@@ -254,9 +240,36 @@ void MyApp::keyCallback(GLFWwindow *window, int key, int scancode,
 	}
 }
 
+void MyApp::cursorCallback(GLFWwindow *window, double xpos, double ypos) {
+	mouseX = xpos / mgl::Engine::getInstance().WindowWidth;
+	mouseY = ypos / mgl::Engine::getInstance().WindowHeight;
+}
+
 void MyApp::scrollCallback(GLFWwindow *window, double xoffset, double yoffset)
 {
-	scale += yoffset;
+	zoom += yoffset;
+}
+
+void MyApp::mouseButtonCallback(GLFWwindow *window, int button, int action, int mods)
+{
+	if(action == GLFW_PRESS) {
+		switch(button) {
+			case GLFW_MOUSE_BUTTON_1:
+				rotate = true;
+				lastX = mouseX;
+				lastY = mouseY;
+				glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+				break;
+		}
+	} 
+	if(action == GLFW_RELEASE) {
+		switch(button) {
+			case GLFW_MOUSE_BUTTON_1:
+				rotate = false;
+				glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+				break;
+		}
+	} 
 }
 
 /////////////////////////////////////////////////////////////////////////// MAIN
