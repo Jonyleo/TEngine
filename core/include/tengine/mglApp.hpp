@@ -57,6 +57,7 @@ namespace mgl
         void setOpenGL(int major, int minor);
         void setWindow(int width, int height, const char *title, int fullscreen,
                        int vsync);
+        void swapFullscren();
         void init(std::string sceneName);
         void run();
         void close();

@@ -26,6 +26,12 @@ namespace tengine
 
         Entity &getRoot() { return *root; }
         mgl::Camera &getCamera() { return *camera; }
+        void setCamera(std::shared_ptr<mgl::Camera> camera) { 
+            this->camera = camera; 
+
+            this->camera->reComputeProjection();
+            this->camera->reComputeView();
+        }
     };
 }
 

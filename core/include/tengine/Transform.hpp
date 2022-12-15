@@ -1,8 +1,6 @@
 #ifndef __TRANSFORM_HPP__
 #define __TRANSFORM_HPP__
 
-#include <iostream>
-
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -29,10 +27,7 @@ namespace tengine
         Transform(tengine::Entity &parent, glm::vec3 position, glm::vec3 rotation, glm::vec3 scale)
             : Component(parent), position(position), rotation(quaternionFromAxis(rotation)), scale(scale),
               transformMatrix(1.0f)
-        {
-
-            std::cout << glm::to_string(position) << glm::to_string(rotation) << glm::to_string(scale) << std::endl;
-        }
+        {}
 
         static glm::quat quaternionFromAxis(glm::vec3 rotation);
         static glm::mat4 calcTransformMatrix(glm::vec3 position, glm::quat rotation, glm::vec3 scale);
