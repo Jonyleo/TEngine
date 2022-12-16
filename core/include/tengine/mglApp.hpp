@@ -29,18 +29,15 @@ namespace mgl
     class App
     {
     public:
-        virtual void initCallback(GLFWwindow *window) {}
-        virtual void displayCallback(GLFWwindow *window, double elapsed) {}
-        virtual void windowCloseCallback(GLFWwindow *window) {}
-        virtual void windowSizeCallback(GLFWwindow *window, int width, int height) {}
-        virtual void cursorCallback(GLFWwindow *window, double xpos, double ypos) {}
-        virtual void keyCallback(GLFWwindow *window, int key, int scancode,
-                                 int action, int mods) {}
-        virtual void mouseButtonCallback(GLFWwindow *window, int button, int action,
-                                         int mods) {}
-        virtual void scrollCallback(GLFWwindow *window, double xoffset,
-                                    double yoffset) {}
-        virtual void joystickCallback(int jid, int event) {}
+        virtual void initCallback(GLFWwindow *window)                                           {}
+        virtual void displayCallback(GLFWwindow *window, double elapsed)                        {}
+        virtual void windowCloseCallback(GLFWwindow *window)                                    {}
+        virtual void windowSizeCallback(GLFWwindow *window, int width, int height)              {}
+        virtual void cursorCallback(GLFWwindow *window, double xpos, double ypos)               {}
+        virtual void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods){}
+        virtual void mouseButtonCallback(GLFWwindow *window, int button, int action, int mods)  {}
+        virtual void scrollCallback(GLFWwindow *window, double xoffset,  double yoffset)        {}
+        virtual void joystickCallback(int jid, int event)                                       {}
     };
 
     ///////////////////////////////////////////////////////////////////////// Engine
@@ -55,14 +52,13 @@ namespace mgl
         void setApp(App *app);
         App *getApp();
         void setOpenGL(int major, int minor);
-        void setWindow(int width, int height, const char *title, int fullscreen,
-                       int vsync);
+        void setWindow(int width, int height, const char *title, int fullscreen, int vsync);
         void swapFullscren();
         void init(std::string sceneName);
         void run();
         void close();
 
-        tengine::Scene &getScene() { return *currentScene; }
+        tengine::Scene &getScene()                             { return *currentScene; }
 
     protected:
         virtual ~Engine();

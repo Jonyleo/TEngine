@@ -27,6 +27,7 @@ namespace tengine
         if (entData.contains("mesh"))
         {
             std::string meshName = entData["mesh"].get<std::string>();
+            
             // Load the mesh
             std::shared_ptr<mgl::Mesh> mesh =
                 ResourceManager::getInstance().load<mgl::Mesh>(meshName);
@@ -34,6 +35,7 @@ namespace tengine
             // Get color
             json colorData = entData["color"];
             Color color = {0};
+
             for (int i = 0; i < 4; ++i)
                 color.RGBA[i] = colorData[i].get<int>() / 255.0f;
 

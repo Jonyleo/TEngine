@@ -27,29 +27,29 @@ namespace mgl
     public:
         GLuint ProgramId;
 
-        struct ShaderInfo
-        {
+        struct ShaderInfo {
             GLuint index;
         };
+
         std::map<GLenum, GLuint> Shaders;
 
-        struct AttributeInfo
-        {
+        struct AttributeInfo {
             GLuint index;
         };
+
         std::map<std::string, AttributeInfo> Attributes;
 
-        struct UniformInfo
-        {
+        struct UniformInfo {
             GLint index;
         };
+
         std::map<std::string, UniformInfo> Uniforms;
 
-        struct UboInfo
-        {
+        struct UboInfo {
             GLuint index;
             GLuint binding_point;
         };
+
         std::map<std::string, UboInfo> Ubos;
 
         ShaderProgram();
@@ -69,8 +69,7 @@ namespace mgl
 
     private:
         const std::string read(const std::string &filename);
-        const GLuint checkCompilation(const GLuint shader_id,
-                                      const std::string &filename);
+        const GLuint checkCompilation(const GLuint shader_id, const std::string &filename);
         void checkLinkage();
     };
 

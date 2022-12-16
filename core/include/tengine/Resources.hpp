@@ -9,19 +9,15 @@
 
 namespace tengine
 {
-
     template <class T>
     concept IsResource = requires(T a, std::string name) {
-                             {
-                                 T::load(name)
-                                 } -> std::same_as<std::shared_ptr<T>>;
-                         };
+        { T::load(name) } -> std::same_as<std::shared_ptr<T>>;
+    };
 
     class ResourceManager
     {
     private:
         std::map<std::type_index, std::map<std::string, std::shared_ptr<void>>> resourceCache;
-
         ResourceManager() {}
 
     protected:
@@ -34,8 +30,7 @@ namespace tengine
             return instance;
         }
 
-        template <typename T>
-            requires IsResource<T>
+        template <typename T> requires IsResource<T>
         std::shared_ptr<T> load(std::string &name)
         {
             std::type_index index = std::type_index(typeid(T));
@@ -48,13 +43,11 @@ namespace tengine
             return std::static_pointer_cast<T>(resourceCache[index][name]);
         }
 
-        void clear()
-        {
+        void clear() {
             resourceCache.clear();
         }
 
-        template <typename T>
-            requires IsResource<T>
+        template <typename T> requires IsResource<T>
         void clear()
         {
             std::type_index index = std::type_index(typeid(T));

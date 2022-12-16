@@ -13,13 +13,11 @@ namespace tengine
 {
     Scene::Scene(std::shared_ptr<Entity> root) : root(root){}
 
-    void Scene::draw()
-    {
+    void Scene::draw(){
         this->root->draw();
     }
 
-    void Scene::update(double timeElapsed)
-    {
+    void Scene::update(double timeElapsed){
         this->root->update(timeElapsed);
     }
 
@@ -27,11 +25,16 @@ namespace tengine
     {
         std::ifstream sceneFile("assets/scenes/" + name + ".json");
         json sceneData = json::parse(sceneFile);
-
         std::string rootName = sceneData["root"];
-
         std::shared_ptr<Entity> root = ResourceManager::getInstance().load<Entity>(rootName);
 
         return std::make_shared<Scene>(root);
+    }
+
+    void Scene::setCamera(std::shared_ptr<mgl::Camera> camera)
+    {
+        this->camera = camera;
+        this->camera->reComputeProjection();
+        this->camera->reComputeView();
     }
 }

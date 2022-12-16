@@ -24,17 +24,20 @@ namespace tengine
 
     public:
         Transform(tengine::Entity &parent) : Transform(parent, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}) {}
-        Transform(tengine::Entity &parent, glm::vec3 position, glm::vec3 rotation, glm::vec3 scale)
-            : Component(parent), position(position), rotation(quaternionFromAxis(rotation)), scale(scale),
-              transformMatrix(1.0f)
-        {}
+        Transform(tengine::Entity &parent, glm::vec3 position, glm::vec3 rotation, glm::vec3 scale) :
+            Component(parent),
+            position(position),
+            rotation(quaternionFromAxis(rotation)),
+            scale(scale),
+            transformMatrix(1.0f){
+        }
 
         static glm::quat quaternionFromAxis(glm::vec3 rotation);
         static glm::mat4 calcTransformMatrix(glm::vec3 position, glm::quat rotation, glm::vec3 scale);
 
-        glm::quat getRotation() { return rotation; }
-        glm::vec3 getPosition() { return position; }
-        glm::vec3 getScale() { return scale; }
+        glm::quat getRotation()                             { return rotation; }
+        glm::vec3 getPosition()                             { return position; }
+        glm::vec3 getScale()                                { return scale; }
 
         void rotateTo(glm::vec3 angles);
         void rotateTo(glm::quat angles);

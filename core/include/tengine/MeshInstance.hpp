@@ -20,11 +20,17 @@ namespace tengine
         std::shared_ptr<mgl::Mesh> mesh;
 
     public:
-        MeshInstance(tengine::Entity &parent,
-                     tengine::Color color,
-                     std::shared_ptr<mgl::ShaderProgram> shader,
-                     std::shared_ptr<mgl::Mesh> mesh)
-            : Component(parent), color(color), shader(shader), mesh(mesh) {}
+        MeshInstance(
+            tengine::Entity &parent,
+            tengine::Color color,
+            std::shared_ptr<mgl::ShaderProgram> shader,
+            std::shared_ptr<mgl::Mesh> mesh
+        ):
+            Component(parent),
+            color(color),
+            shader(shader),
+            mesh(mesh)
+        {}
 
         virtual void bind();
         virtual void preDraw();

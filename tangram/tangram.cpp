@@ -1,13 +1,11 @@
 ////////////////////////////////////////////////////////////////////////////////
+//	CGJ Project - 2022-2023
+//	
+//	"Assignment 3 - 3D TANGRAM"
 //
-// Drawing two instances of a triangle in Clip Space.
-// A "Hello 2D World" of Modern OpenGL.
-//
-// (c)2013-22 by Carlos Martinho
-//
-// INTRODUCES:
-// GL PIPELINE, mglShader.hpp, mglConventions.hpp
-//
+//	Group 1:
+//		Joao Oliveira  | 93728
+//		Giulio Camasso | 105147
 ////////////////////////////////////////////////////////////////////////////////
 
 #include <iostream>
@@ -22,8 +20,6 @@
 #include <tengine/Component.hpp>
 
 ////////////////////////////////////////////////////////////////////////// MYAPP
-
-
 class MyApp : public mgl::App
 {
 friend class TangramScript;
@@ -32,10 +28,9 @@ private:
 
 	std::shared_ptr<mgl::CameraBuffer> cameraBuff;
 	std::vector<std::shared_ptr<mgl::Camera>> cameras;
+	
 	int nCamera = 0;
-
 	int transition = 0;
-
 	bool rotate = false;
 
 	double mouseX = 0;
@@ -46,7 +41,7 @@ private:
 	double zoom = 0;
 
 	bool switchCamera = false;
-	bool switchPerspective = false;
+	bool switchPerspective = true;
 
 public:
 	void initCallback(GLFWwindow *win) override;
@@ -60,7 +55,6 @@ public:
 
 class TangramScript : public tengine::Component
 {
-
 	struct Transition
 	{
 		glm::vec3 position;
@@ -70,13 +64,16 @@ class TangramScript : public tengine::Component
 private:
 
 	MyApp& app;
-	float transitionTime = 0.5; // transition takes 5 seconds
+	float transitionTime = 0.5;
 	float timePassed = 0;
+
 	std::map<std::string, std::shared_ptr<tengine::Transform>> pieceTransforms;
 	std::map<std::string, std::shared_ptr<tengine::Transform>> boxTransforms;
+
 	std::map<std::string, Transition> transitionMap;
 	std::map<std::string, Transition> initialMap;
-	float sensitivity = 1;
+
+	float sensitivity = 1.5;
 
 public:
 	void init()
@@ -95,8 +92,15 @@ public:
 			std::string childName = box.first.substr(0, box.first.length() - 3);
 			std::shared_ptr<tengine::Transform> childTrans = pieceTransforms[childName];
 
-			transitionMap[childName] = {boxTrans->getPosition(), boxTrans->getRotation()};
-			initialMap[childName] = {childTrans->getPosition(), childTrans->getRotation()};
+			transitionMap[childName] = {
+				boxTrans->getPosition(),
+				boxTrans->getRotation()
+			};
+
+			initialMap[childName] = {
+				childTrans->getPosition(),
+				childTrans->getRotation()
+			};
 		}
 	}
 
@@ -117,9 +121,7 @@ public:
 			float movementX = -(app.mouseX - app.lastX) * sensitivity; 
 			float movementY = (app.mouseY - app.lastY) * sensitivity;
 
-			mgl::Engine::getInstance().getScene().getCamera().rotate(
-				movementX, movementY
-			);
+			mgl::Engine::getInstance().getScene().getCamera().rotate(movementX, movementY);
 
 			app.lastX = app.mouseX;
 			app.lastY = app.mouseY;
@@ -167,8 +169,8 @@ public:
 void MyApp::initCallback(GLFWwindow *win)
 {
 	cameraBuff = std::make_shared<mgl::CameraBuffer>(mgl::CAMERA_BLOCK_BINDING_POINT);
-	
-	// camera 0: box configuration
+
+	// camera 0 (def: tangram figure composed)
 	cameras.push_back(
 		std::make_shared<mgl::Camera>(
 			cameraBuff, 
@@ -178,8 +180,9 @@ void MyApp::initCallback(GLFWwindow *win)
 			mgl::zFar
 		)
 	);
+	cameras[0]->rotate(glm::radians(90.0), 0);
 
-	// camera 1: tangram figure composed
+	// camera 1 (def: tangram box configuration)
 	cameras.push_back(
 		std::make_shared<mgl::Camera>(
 			cameraBuff, 
@@ -189,7 +192,6 @@ void MyApp::initCallback(GLFWwindow *win)
 			mgl::zFar
 		)
 	);
-
 	
 	tengine::Scene &scene = mgl::Engine::getInstance().getScene();
 
@@ -295,7 +297,7 @@ int main(int argc, char *argv[])
 	mgl::Engine &engine = mgl::Engine::getInstance();
 	engine.setApp(new MyApp());
 	engine.setOpenGL(4, 6);
-	engine.setWindow(600, 600, "Tangram || Group 1 [ASS 2]", 0, 1);
+	engine.setWindow(600, 600, "3D Tangram:GUN || Group 1 [ASS 3]", 0, 1);
 	engine.init("tangram");
 	engine.run();
 	exit(EXIT_SUCCESS);

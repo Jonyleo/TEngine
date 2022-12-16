@@ -17,21 +17,14 @@ namespace tengine
 
     public:
         Scene(std::shared_ptr<Entity> root);
-        ~Scene() {}
+        ~Scene(){}
 
         static std::shared_ptr<Scene> load(std::string &name);
-
         void draw();
-        void update(double timeElapsed); // TODO: Delta time
-
-        Entity &getRoot() { return *root; }
-        mgl::Camera &getCamera() { return *camera; }
-        void setCamera(std::shared_ptr<mgl::Camera> camera) { 
-            this->camera = camera; 
-
-            this->camera->reComputeProjection();
-            this->camera->reComputeView();
-        }
+        void update(double timeElapsed);
+        Entity &getRoot()                           { return *root;   }
+        mgl::Camera &getCamera()                    { return *camera; }
+        void setCamera(std::shared_ptr<mgl::Camera> camera);
     };
 }
 

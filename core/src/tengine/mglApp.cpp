@@ -13,48 +13,36 @@ namespace mgl
 
     /////////////////////////////////////////////////////////////// STATIC CALLBACKS
 
-    static void window_close_callback(GLFWwindow *window)
-    {
+    static void window_close_callback(GLFWwindow *window) {
         Engine::getInstance().getApp()->windowCloseCallback(window);
     }
 
-    static void window_size_callback(GLFWwindow *window, int width, int height)
-    {
+    static void window_size_callback(GLFWwindow *window, int width, int height) {
         Engine::getInstance().getApp()->windowSizeCallback(window, width, height);
     }
 
-    static void glfw_error_callback(int error, const char *description)
-    {
+    static void glfw_error_callback(int error, const char *description) {
         std::cerr << "GLFW Error: " << description << std::endl;
     }
 
-    static void cursor_pos_callback(GLFWwindow *window, double xpos, double ypos)
-    {
+    static void cursor_pos_callback(GLFWwindow *window, double xpos, double ypos) {
         Engine::getInstance().getApp()->cursorCallback(window, xpos, ypos);
     }
 
-    static void key_callback(GLFWwindow *window, int key, int scancode, int action,
-                             int mods)
-    {
+    static void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods) {
         Engine::getInstance().getApp()->keyCallback(window, key, scancode, action,
                                                     mods);
     }
 
-    static void mouse_button_callback(GLFWwindow *window, int button, int action,
-                                      int mods)
-    {
-        Engine::getInstance().getApp()->mouseButtonCallback(window, button, action,
-                                                            mods);
+    static void mouse_button_callback(GLFWwindow *window, int button, int action, int mods)  {
+        Engine::getInstance().getApp()->mouseButtonCallback(window, button, action, mods);
     }
 
-    static void scroll_callback(GLFWwindow *window, double xoffset,
-                                double yoffset)
-    {
+    static void scroll_callback(GLFWwindow *window, double xoffset, double yoffset) {
         Engine::getInstance().getApp()->scrollCallback(window, xoffset, yoffset);
     }
 
-    static void joystick_callback(int jid, int event)
-    {
+    static void joystick_callback(int jid, int event) {
         Engine::getInstance().getApp()->joystickCallback(jid, event);
     }
 
@@ -79,9 +67,9 @@ namespace mgl
         return instance;
     }
 
-    App *Engine::getApp(void) { return GlApp; }
+    App *Engine::getApp(void)                       { return GlApp; }
 
-    void Engine::setApp(App *app) { GlApp = app; }
+    void Engine::setApp(App *app)                   { GlApp = app; }
 
     void Engine::setOpenGL(int major, int minor)
     {
@@ -89,8 +77,7 @@ namespace mgl
         GlMinor = minor;
     }
 
-    void Engine::setWindow(int width, int height, const char *title, int fullscreen,
-                           int vsync)
+    void Engine::setWindow(int width, int height, const char *title, int fullscreen, int vsync)
     {
         WindowWidth = width;
         WindowHeight = height;
@@ -129,9 +116,8 @@ namespace mgl
     {
         glfwSetErrorCallback(glfw_error_callback);
         if (!glfwInit())
-        {
             exit(EXIT_FAILURE);
-        }
+
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, GlMajor);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, GlMinor);
 
@@ -146,6 +132,7 @@ namespace mgl
     void Engine::setupGLEW()
     {
         glewExperimental = GL_TRUE;
+
         // Allow extension entry points to be loaded even if the extension isn't
         // present in the driver's extensions string.
         GLenum result = glewInit();
@@ -187,7 +174,7 @@ namespace mgl
         setupGLFW();
         setupGLEW();
         setupOpenGL();
-
+        
         currentScene = tengine::ResourceManager::getInstance().load<tengine::Scene>(sceneName);
 
         GlApp->initCallback(Window);
@@ -218,14 +205,11 @@ namespace mgl
         glfwTerminate();
     }
 
-    void Engine::close()
-    {
+    void Engine::close() {
         running = false;
     }
 
-    void Engine::swapFullscren() {
-
-    }
+    void Engine::swapFullscren() {}
 
     ////////////////////////////////////////////////////////////////////////////////
 } // namespace mgl
