@@ -1,8 +1,7 @@
 # CGJ Project
 
-### Group 1
+### Individual project
 Jo�o Oliveira 93728
-Giulio Camasso 105147
 
 ## Installation
 
@@ -39,14 +38,19 @@ it does not, please copy it manually.
 
 ### Program
 
-The screen should show the gun model tangram with a blue background.
+The screen should show the door model with a blue background.
 You can resize the window without stretching.
 
 COMMAND LIST:
 
-L/R arrow keys  | animate the tangram between the 2 configurations
-Scroll Wheel	| scale tangram (zoom)
-Mouse Left      | manipulate the position of the camera
+Scroll Wheel	| zoom
+Mouse drag      | rotate the door
 C				| switch between the 2 cameras
 P				| switch between orthographic and perspective projection
 ESC             | close the application
+
+S				| Save current game
+1-9				| Load saved game, most recent save is 1, next is 2, etc...
+
+The game always restarts in the default state, a save file must be explicitly loaded each time 
+the application is reset.

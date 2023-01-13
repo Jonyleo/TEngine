@@ -67,7 +67,7 @@ namespace script {
                     std::string path = "saves";
                     std::vector<std::string> saves;
                     for(const auto & save : std::filesystem::directory_iterator(path)) {
-                        saves.push_back(save.path());
+                        saves.push_back(save.path().string());
                     }
 
                     if(loadFile < saves.size()) {
