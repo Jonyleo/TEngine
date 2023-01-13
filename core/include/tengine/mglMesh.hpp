@@ -46,7 +46,7 @@ namespace mgl
     static const GLuint TEXCOORD = 3;
     static const GLuint TANGENT = 4;
 
-    explicit Mesh();
+    explicit Mesh(std::string &id);
     ~Mesh();
 
     void setAssimpFlags(unsigned int flags);
@@ -66,9 +66,12 @@ namespace mgl
     bool hasTexcoords();
     bool hasTangentsAndBitangents();
 
+    std::string &getId();
+
     static std::shared_ptr<Mesh> load(std::string &name);
 
   private:
+    std::string id;
     GLuint VaoId;
     unsigned int AssimpFlags;
     bool NormalsLoaded, TexcoordsLoaded, TangentsAndBitangentsLoaded;

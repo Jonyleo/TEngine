@@ -77,7 +77,7 @@ namespace mgl
     void Camera::zoomBy(float zoomDistance) 
     {
         radius -= zoomDistance;
-        radius = std::clamp(radius, 3.0f, 9.0f);
+        radius = std::clamp(radius, zNear + 2.0f, zFar - 1.0f);
 
         reComputeView();
     }
@@ -101,6 +101,16 @@ namespace mgl
         glm::quat rotRightQuat = glm::angleAxis(rotRight, rightAxis);
 
         return rotRightQuat * afterRotYposition;
+    }
+
+    void Camera::save(json &data) {
+        data["rotY"] = rotY;
+        data["rotRight"] = rotRight;
+        data["radius"] = radius;
+        data["fov"] = fov;
+        data["zNear"] = zNear;
+        data["zFar"] = zFar;
+        data["perspective"] = perspective;
     }
 
     ////////////////////////////////////////////////////////////////////////////////

@@ -2,11 +2,15 @@
 #include <set>
 #include <string>
 
+#include <tengine/mglConventions.hpp>
 #include <tengine/mglApp.hpp>
 #include <tengine/mglError.hpp>
 
 #include <tengine/Resources.hpp>
 #include <tengine/Scene.hpp>
+#include <tengine/Input.hpp>
+#include <tengine/Transform.hpp>
+#include <tengine/MeshInstance.hpp>
 
 namespace mgl
 {
@@ -23,23 +27,6 @@ namespace mgl
 
     static void glfw_error_callback(int error, const char *description) {
         std::cerr << "GLFW Error: " << description << std::endl;
-    }
-
-    static void cursor_pos_callback(GLFWwindow *window, double xpos, double ypos) {
-        Engine::getInstance().getApp()->cursorCallback(window, xpos, ypos);
-    }
-
-    static void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods) {
-        Engine::getInstance().getApp()->keyCallback(window, key, scancode, action,
-                                                    mods);
-    }
-
-    static void mouse_button_callback(GLFWwindow *window, int button, int action, int mods)  {
-        Engine::getInstance().getApp()->mouseButtonCallback(window, button, action, mods);
-    }
-
-    static void scroll_callback(GLFWwindow *window, double xoffset, double yoffset) {
-        Engine::getInstance().getApp()->scrollCallback(window, xoffset, yoffset);
     }
 
     static void joystick_callback(int jid, int event) {
@@ -103,10 +90,6 @@ namespace mgl
 
     void Engine::setupCallbacks()
     {
-        glfwSetCursorPosCallback(Window, cursor_pos_callback);
-        glfwSetKeyCallback(Window, key_callback);
-        glfwSetMouseButtonCallback(Window, mouse_button_callback);
-        glfwSetScrollCallback(Window, scroll_callback);
         glfwSetJoystickCallback(joystick_callback);
         glfwSetWindowCloseCallback(Window, window_close_callback);
         glfwSetWindowSizeCallback(Window, window_size_callback);
@@ -167,6 +150,9 @@ namespace mgl
         glCullFace(GL_BACK);
         glFrontFace(GL_CCW);
         glViewport(0, 0, WindowWidth, WindowHeight);
+
+        
+	    cameraBuff = std::make_shared<mgl::CameraBuffer>(mgl::CAMERA_BLOCK_BINDING_POINT);
     }
 
     void Engine::init(std::string sceneName)
@@ -174,10 +160,16 @@ namespace mgl
         setupGLFW();
         setupGLEW();
         setupOpenGL();
-        
-        currentScene = tengine::ResourceManager::getInstance().load<tengine::Scene>(sceneName);
+
+        tengine::Component::registerComponent("transform", &tengine::Transform::loadTransform);
+        tengine::Component::registerComponent("meshInstance", &tengine::MeshInstance::loadMeshInstance);
+
+        tengine::InputManager::getInstance().init(Window);
 
         GlApp->initCallback(Window);
+
+        currentScene = tengine::ResourceManager::getInstance().load<tengine::Scene>(sceneName);
+        currentScene->getRoot().init();
 
 #ifdef DEBUG
         displayInfo();
@@ -192,12 +184,20 @@ namespace mgl
         double last_time = glfwGetTime();
         while (!glfwWindowShouldClose(Window) && running)
         {
+            if(loadNextScene) {
+                tengine::ResourceManager::getInstance().clear<tengine::Scene>(nextSceneToLoad);
+                currentScene = tengine::ResourceManager::getInstance().load<tengine::Scene>(nextSceneToLoad);
+                currentScene->getRoot().init();
+                loadNextScene = false;
+            }
+
             double time = glfwGetTime();
             double elapsed_time = time - last_time;
             last_time = time;
             currentScene->update(elapsed_time);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
             currentScene->draw();
+            currentScene->finish();
             glfwSwapBuffers(Window);
             glfwPollEvents();
         }
@@ -210,6 +210,13 @@ namespace mgl
     }
 
     void Engine::swapFullscren() {}
+
+    
+    void Engine::loadScene(std::string &path) {
+        nextSceneToLoad = path;
+        loadNextScene = true;
+    }
+
 
     ////////////////////////////////////////////////////////////////////////////////
 } // namespace mgl

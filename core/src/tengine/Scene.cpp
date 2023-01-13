@@ -11,7 +11,7 @@ using json = nlohmann::json;
 
 namespace tengine
 {
-    Scene::Scene(std::shared_ptr<Entity> root) : root(root){}
+    Scene::Scene(std::shared_ptr<Entity> root, std::string &name) : root(root), name(name) {}
 
     void Scene::draw(){
         this->root->draw();
@@ -21,14 +21,31 @@ namespace tengine
         this->root->update(timeElapsed);
     }
 
-    std::shared_ptr<Scene> Scene::load(std::string &name)
-    {
-        std::ifstream sceneFile("assets/scenes/" + name + ".json");
-        json sceneData = json::parse(sceneFile);
-        std::string rootName = sceneData["root"];
-        std::shared_ptr<Entity> root = ResourceManager::getInstance().load<Entity>(rootName);
+    void Scene::finish() {
+        this->root->finish();
+    }
 
-        return std::make_shared<Scene>(root);
+    std::shared_ptr<Scene> Scene::load(std::string &path)
+    {
+        std::ifstream sceneFile(path);
+        json sceneData = json::parse(sceneFile);
+        std::shared_ptr<Entity> root = Entity::load(sceneData["root"]);
+
+        std::string sceneId = sceneData["id"].get<std::string>();
+
+        return std::make_shared<Scene>(root, sceneId);
+    }
+
+    void Scene::save(std::string &save) {
+        json sceneData;
+        json rootData;
+        root->save(rootData);
+        sceneData["root"] = rootData;
+        sceneData["id"] = name;
+
+        std::ofstream sceneFile("saves/" + save + "_" + name + ".json");
+        sceneFile << sceneData;
+        sceneFile.close();
     }
 
     void Scene::setCamera(std::shared_ptr<mgl::Camera> camera)

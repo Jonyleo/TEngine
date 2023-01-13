@@ -10,7 +10,7 @@
 #define MGL_SHADER_HPP
 
 #include <iostream>
-#include <map>
+#include <map> 
 #include <string>
 
 #include <GL/glew.h>
@@ -25,6 +25,8 @@ namespace mgl
     class ShaderProgram
     {
     public:
+        std::string id;
+
         GLuint ProgramId;
 
         struct ShaderInfo {
@@ -52,7 +54,7 @@ namespace mgl
 
         std::map<std::string, UboInfo> Ubos;
 
-        ShaderProgram();
+        ShaderProgram(std::string &id);
         ~ShaderProgram();
         void addShader(const GLenum shader_type, const std::string &filename);
         void addAttribute(const std::string &name, const GLuint index);
@@ -64,6 +66,8 @@ namespace mgl
         void create();
         void bind();
         void unbind();
+
+        std::string &getId() {return id;}
 
         static std::shared_ptr<ShaderProgram> load(std::string &name);
 

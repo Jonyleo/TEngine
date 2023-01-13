@@ -40,6 +40,7 @@ set(TEngine_CORE_INCLUDE
 	"include/tengine/Renderer.hpp"
 	"include/tengine/Scene.hpp"
 	"include/tengine/Resources.hpp"
+	"include/tengine/Input.hpp"
 )
 
 set(TEngine_CORE_SOURCE
@@ -55,7 +56,7 @@ set(TEngine_CORE_SOURCE
 	"src/tengine/MeshInstance.cpp"
 	"src/tengine/Renderer.cpp"
 	"src/tengine/Scene.cpp"
-	
+	"src/tengine/Input.cpp"
 )
 
 add_library(tengine-core ${TEngine_CORE_SOURCE} ${TEngine_CORE_INCLUDE})

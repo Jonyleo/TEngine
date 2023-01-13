@@ -1,0 +1,105 @@
+{
+    "id": "doorScene",
+    "root": {
+        "children": [
+            {
+                "children": [
+                    {
+                        "children": [],
+                        "components": {
+                            "meshInstance": {
+                                "color": [
+                                    153,
+                                    102,
+                                    51,
+                                    255
+                                ],
+                                "mesh": "cube.obj",
+                                "shader": "wood-shader"
+                            },
+                            "transform": {
+                                "position": [
+                                    -1.0,
+                                    0.0,
+                                    0.0
+                                ],
+                                "rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    2.0,
+                                    0.10000000149011612
+                                ]
+                            }
+                        },
+                        "id": "door"
+                    }
+                ],
+                "components": {
+                    "transform": {
+                        "position": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ],
+                        "rotation": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ]
+                    }
+                },
+                "id": "doorPivot"
+            }
+        ],
+        "components": {
+            "cameraScript": {
+                "cameras": [
+                    {
+                        "fov": 0.5235987901687622,
+                        "perspective": true,
+                        "radius": 20.0,
+                        "rotRight": 0.30000001192092896,
+                        "rotY": 2.4000000953674316,
+                        "zFar": 25.0,
+                        "zNear": 1.0
+                    }
+                ],
+                "enableDrag": false,
+                "nCamera": 0
+            },
+            "commonScript": null,
+            "doorScript": null,
+            "saveScript": null,
+            "transform": {
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        "id": "world"
+    }
+}

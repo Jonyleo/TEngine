@@ -1,6 +1,24 @@
 cmake_minimum_required(VERSION 3.0.0)
 project(tangram)
 
+
+set(MY_GAME_INCLUDE
+
+	"tangram.hpp"
+	"door.hpp"
+	"camera.hpp"
+	"save.hpp"
+	"common.hpp"
+)
+
+set(MY_GAME_SOURCE
+
+	"tangram.cpp"
+	"main.cpp"
+)
+
+
+
 if(MSVC)
 	find_library(glfw3 REQUIRED
 				NAMES glfw3
@@ -16,7 +34,7 @@ elseif(UNIX AND NOT APPLE)
 	find_package(GLEW REQUIRED)
 endif()
 
-add_executable(${PROJECT_NAME} "tangram.cpp")
+add_executable(${PROJECT_NAME} ${MY_GAME_INCLUDE} ${MY_GAME_SOURCE})
 
 target_include_directories(${PROJECT_NAME} 
 	PUBLIC "${CMAKE_SOURCE_DIR}/dependencies/include"
@@ -59,5 +77,12 @@ add_custom_command(TARGET copy_files
 	${TANGRAM_RESOURCES}
 	${CMAKE_CURRENT_BINARY_DIR}/assets
 )
+
+add_custom_command(TARGET copy_files
+	POST_BUILD
+	COMMAND ${CMAKE_COMMAND} -E make_directory
+	${CMAKE_CURRENT_BINARY_DIR}/saves
+)
+
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 20)
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_20)

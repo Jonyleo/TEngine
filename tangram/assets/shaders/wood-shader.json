@@ -1,0 +1,4 @@
+{
+    "fragment": "wood-fs.glsl",
+    "vertex": "cube-vs.glsl"
+}

@@ -17,6 +17,7 @@
 #include <glm/glm.hpp>
 
 #include "Scene.hpp"
+#include "mglCamera.hpp"
 
 namespace mgl
 {
@@ -33,10 +34,6 @@ namespace mgl
         virtual void displayCallback(GLFWwindow *window, double elapsed)                        {}
         virtual void windowCloseCallback(GLFWwindow *window)                                    {}
         virtual void windowSizeCallback(GLFWwindow *window, int width, int height)              {}
-        virtual void cursorCallback(GLFWwindow *window, double xpos, double ypos)               {}
-        virtual void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods){}
-        virtual void mouseButtonCallback(GLFWwindow *window, int button, int action, int mods)  {}
-        virtual void scrollCallback(GLFWwindow *window, double xoffset,  double yoffset)        {}
         virtual void joystickCallback(int jid, int event)                                       {}
     };
 
@@ -46,6 +43,9 @@ namespace mgl
     {
     public:
         unsigned short WindowWidth, WindowHeight;
+        std::shared_ptr<CameraBuffer> cameraBuff;
+        std::string nextSceneToLoad;
+        bool loadNextScene = false;
 
         static Engine &getInstance();
 
@@ -57,8 +57,9 @@ namespace mgl
         void init(std::string sceneName);
         void run();
         void close();
+        void loadScene(std::string &path);
 
-        tengine::Scene &getScene()                             { return *currentScene; }
+        std::shared_ptr<tengine::Scene> &getScene() { return currentScene; }
 
     protected:
         virtual ~Engine();
@@ -83,6 +84,8 @@ namespace mgl
     public:
         Engine(Engine const &) = delete;
         void operator=(Engine const &) = delete;
+
+        std::shared_ptr<CameraBuffer> getCameraBuff() { return cameraBuff; }
     };
 
     ////////////////////////////////////////////////////////////////////////////////

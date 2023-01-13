@@ -5,8 +5,9 @@ namespace mgl
 
   ////////////////////////////////////////////////////////////////////////////////
 
-  Mesh::Mesh()
+  Mesh::Mesh(std::string &id)
   {
+    this->id = id;
     NormalsLoaded = false;
     TexcoordsLoaded = false;
     TangentsAndBitangentsLoaded = false;
@@ -202,10 +203,14 @@ namespace mgl
 
   std::shared_ptr<Mesh> Mesh::load(std::string &name)
   {
-    std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>();
+    std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>(name);
     mesh->joinIdenticalVertices();
     mesh->create("assets/meshes/" + name);
     return mesh;
+  }
+
+  std::string &Mesh::getId() {
+    return id;
   }
 
   ////////////////////////////////////////////////////////////////////////////////

@@ -17,47 +17,17 @@ using json = nlohmann::json;
 namespace tengine
 {
 
-    std::shared_ptr<Entity> Entity::load(std::string &name)
+    std::shared_ptr<Entity> Entity::load(json &entData)
     {
-        std::ifstream entFile("assets/entities/" + name + ".json");
-        json entData = json::parse(entFile);
+        std::string entityId = entData["id"].get<std::string>();
+        std::shared_ptr<Entity> entity = std::make_shared<Entity>(entityId);
 
-        std::shared_ptr<Entity> entity = std::make_shared<Entity>(name);
+        json compData = entData["components"];
 
-        if (entData.contains("mesh"))
-        {
-            std::string meshName = entData["mesh"].get<std::string>();
-            
-            // Load the mesh
-            std::shared_ptr<mgl::Mesh> mesh =
-                ResourceManager::getInstance().load<mgl::Mesh>(meshName);
-
-            // Get color
-            json colorData = entData["color"];
-            Color color = {0};
-
-            for (int i = 0; i < 4; ++i)
-                color.RGBA[i] = colorData[i].get<int>() / 255.0f;
-
-            std::string shaderName = entData["shader"].get<std::string>();
-
-            std::shared_ptr<mgl::ShaderProgram> shader =
-                ResourceManager::getInstance().load<mgl::ShaderProgram>(shaderName);
-
-            entity->attachComponent(std::make_shared<MeshInstance>(*entity, color, shader, mesh));
+        for(json::iterator it = compData.begin(); it != compData.end(); ++it) {
+            std::string compId = it.key();
+            entity->attachComponent(Component::load(*entity, compId, it.value()));
         }
-
-        // Get position, rotation and scale
-        json posData = entData["position"];
-        glm::vec3 position(posData[0].get<float>(), posData[1].get<float>(), posData[2].get<float>());
-
-        json rotData = entData["rotation"];
-        glm::vec3 rotation(rotData[0].get<float>(), rotData[1].get<float>(), rotData[2].get<float>());
-
-        json sclData = entData["scale"];
-        glm::vec3 scale(sclData[0].get<float>(), sclData[1].get<float>(), sclData[2].get<float>());
-
-        entity->attachComponent(std::make_shared<Transform>(*entity, position, rotation, scale));
 
         if (entData.contains("children"))
         {
@@ -65,13 +35,33 @@ namespace tengine
 
             for (int i = 0; i < childData.size(); ++i)
             {
-                std::string childName = childData[i].get<std::string>();
-                entity->addChild(
-                    ResourceManager::getInstance().load<Entity>(childName));
+                entity->addChild(Entity::load(childData[i]));
             }
         }
 
         return entity;
+    }
+
+    void Entity::save(json &entData) {
+        json compData;
+
+        for(auto component : components) {
+            component->save(compData);
+        }
+
+        entData["components"] = compData;
+
+        json childrenData = json::array();
+
+        for(auto child : children) {
+            json childData;
+            child->save(childData);
+
+            childrenData.push_back(childData);
+        }
+        
+        entData["children"] = childrenData;
+        entData["id"] = id;
     }
 
     using pComponent = std::shared_ptr<Component>;
@@ -129,6 +119,16 @@ namespace tengine
 
         for (auto &child : children)
             child->update(timeElapsed);
+    }
+
+    void Entity::finish() 
+    {
+        for (auto &comp : components)
+            comp->finish();
+
+        for (auto &child : children)
+            child->finish();
+
     }
 
     std::string Entity::getName()                                   { return id; }

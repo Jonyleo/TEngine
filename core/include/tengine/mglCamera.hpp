@@ -11,6 +11,8 @@
 
 #include <memory>
 
+#include <nlohmann/json.hpp>
+
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 #include <glm/gtx/quaternion.hpp>
@@ -18,6 +20,8 @@
 
 namespace mgl
 {
+
+    using json = nlohmann::json;
 
     class CameraBuffer;
     class Camera;
@@ -34,12 +38,15 @@ namespace mgl
     public:
         explicit CameraBuffer(GLuint bindingpoint);
         ~CameraBuffer();
+
+        CameraBuffer &getInstance();
         glm::mat4 getViewMatrix();
         void setViewMatrix(const glm::mat4 &viewmatrix);
         glm::mat4 getProjectionMatrix();
         void setProjectionMatrix(const glm::mat4 &projectionmatrix);
 
     };
+
 
     class Camera {
         private:
@@ -75,6 +82,8 @@ namespace mgl
             void reComputeView();
 
             glm::vec3 getPosition();
+
+            void save(json &data);
     }; 
 
     ////////////////////////////////////////////////////////////////////////////////

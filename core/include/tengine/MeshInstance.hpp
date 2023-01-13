@@ -8,6 +8,7 @@
 #include "mglMesh.hpp"
 
 #include "DataStructs.hpp"
+#include "Component.hpp"
 #include "Entity.hpp"
 
 namespace tengine
@@ -15,14 +16,14 @@ namespace tengine
     class MeshInstance : public Component
     {
     private:
-        tengine::Color color;
+        Color color;
         std::shared_ptr<mgl::ShaderProgram> shader;
         std::shared_ptr<mgl::Mesh> mesh;
 
     public:
         MeshInstance(
-            tengine::Entity &parent,
-            tengine::Color color,
+            Entity &parent,
+            Color color,
             std::shared_ptr<mgl::ShaderProgram> shader,
             std::shared_ptr<mgl::Mesh> mesh
         ):
@@ -32,10 +33,20 @@ namespace tengine
             mesh(mesh)
         {}
 
+        MeshInstance(
+            Entity &parent
+        ):
+            MeshInstance(parent, {0,0,0,0}, nullptr, nullptr)
+        {}
         virtual void bind();
         virtual void preDraw();
         void draw();
         virtual void unbind();
+
+        static std::shared_ptr<Component> loadMeshInstance(Entity &parent, json &entData);
+        virtual void saveComponent(json &entData);
+
+        std::string getId() { return "meshInstance"; }
     };
 }
 

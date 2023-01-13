@@ -57,7 +57,7 @@ namespace mgl
         }
     }
 
-    ShaderProgram::ShaderProgram() : ProgramId(glCreateProgram()) {}
+    ShaderProgram::ShaderProgram(std::string &id) : ProgramId(glCreateProgram()), id(id) {}
 
     ShaderProgram::~ShaderProgram()
     {
@@ -143,7 +143,7 @@ namespace mgl
 
     std::shared_ptr<ShaderProgram> ShaderProgram::load(std::string &name)
     {
-        std::shared_ptr<ShaderProgram> shader = std::make_shared<ShaderProgram>();
+        std::shared_ptr<ShaderProgram> shader = std::make_shared<ShaderProgram>(name);
 
         std::string shaderDir = "assets/shaders/";
 
